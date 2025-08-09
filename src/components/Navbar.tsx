@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { translations } from '@/lib/translations'
 import { useState } from 'react'
@@ -20,10 +20,18 @@ export default function Navbar() {
   const { user, profile, signOut } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
 
   const handleSignOut = async () => {
     try {
       await signOut()
+      // Close mobile menu if open
+      setIsMenuOpen(false)
+      // Navigate home and force a full reload to guarantee UI updates
+      router.replace('/')
+      if (typeof window !== 'undefined') {
+        window.location.reload()
+      }
     } catch (error) {
       console.error('Error signing out:', error)
     }

@@ -57,25 +57,30 @@ export default function Home() {
           className="object-cover object-bottom"
         />
         {/* Soft overlay for readability across the page */}
-        <div className="absolute inset-0 bg-white/50"></div>
+        <div className="absolute inset-0 "></div>
       </div>
       {/* Hero Section - Personal, inviting, Noa-forward */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         
         
         {/* Content */}
-        <div className="container relative z-10 text-center image-text-contrast">
+        <div className="container relative z-10 text-center image-text-contrast text-white">
           <div className="mx-auto">
-            <h1 className="heading-xl text-[var(--color-charcoal)] mb-6 fade-in-up" style={{ animationDelay: '0s' }}>
+            <h1 className="heading-xl mb-6 fade-in-up" style={{ animationDelay: '0s' }}>
               הסטודיו שלו נועה גורלינק
             </h1>
-            <p className="body-lg text-[var(--color-soft-charcoal)] mb-4 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
+            <p className="body-lg mb-4 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
               מביאה חיזוק, רכות וריפוי.
             </p>
-            <p className="quote-xl quote-accent-strong mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.2s' }}>
-              ״יש לך אותך״
+            <p className="quote-xl mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.2s' }}>
+              <span
+                className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-warm-terracotta)] to-[var(--color-accent-coral)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
+                style={{ fontFamily: 'var(--font-quote)' }}
+              >
+                ״יש לך אותך״
+              </span>
             </p>
-            <p className="body-md text-[var(--color-soft-charcoal)] mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.3s' }}>
+            <p className="body-md mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.3s' }}>
               בעלת סטודיו פילאטיס מזרן • פילאטיס לכל הרמות • לנשים בהריון • לאחר לידה • בייבילאטיס • שיטת הפלייסטיק • יוגה האטה • ויניאסה • פאוור ויניאסה
             </p>
             
@@ -85,9 +90,6 @@ export default function Home() {
                   <SparklesIcon className="w-5 h-5" />
                   התחלי 7 ימים חינם
                 </Link>
-                <p className="body-sm text-[var(--color-soft-charcoal)] opacity-70 fade-in-up" style={{ animationDelay: '0.55s' }}>
-                  ללא התחייבות • ביטול בכל עת
-                </p>
               </div>
             ) : (
               <div className="card max-w-md mx-auto text-center">
@@ -168,10 +170,10 @@ export default function Home() {
             {/* For Every Body - Redesigned */}
             <section className="section-padding reveal-on-scroll">
         <div className="container text-center">
-          <h2 className="heading-lg text-[var(--color-charcoal)] mb-8 fade-in-up" style={{ animationDelay: '0s' }}>
+          <h2 className="heading-lg text-white mb-8 fade-in-up" style={{ animationDelay: '0s' }}>
             לכל גוף
           </h2>
-          <p className="body-lg text-[var(--color-soft-charcoal)] mb-12 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
+          <p className="body-lg text-white mb-12 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
             זה הרבה מעבר לאימון. זו קהילה רכה ומחזיקה של נשים שבוחרות לנשום, לנוע ולהקשיב לגוף.
             בכל גיל ובכל רמה — את מתקבלת כפי שאת. בכל שבוע אנחנו מתרגלות יחד ומגלות
             כמה תנועה קטנה יכולה לשנות יום שלם — לנפש ולגוף.
@@ -212,7 +214,7 @@ export default function Home() {
       </section>
 
 
-      <div className="section-divider"></div>
+      <div className="section-divider bg-white"></div>
       
       {/* Pricing - Noa style */}
       <section className="section-padding bg-[var(--color-warm-gray)]/70 reveal-on-scroll">

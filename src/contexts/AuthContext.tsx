@@ -78,10 +78,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
-      if (error) throw error
-      setProfile(data)
+      // If no profile row exists yet, don't treat as a hard error
+      if (error) {
+        // PGRST116: No rows returned when expecting one
+        // Some environments return status 406 for maybeSingle no row
+        const code = (error as any)?.code
+        const status = (error as any)?.status
+        if (code === 'PGRST116' || status === 406) {
+          setProfile(null)
+          return
+        }
+        throw error
+      }
+
+      setProfile(data ?? null)
     } catch (error) {
       console.error('Error fetching profile:', error)
     }
@@ -115,6 +127,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+    // Proactively clear local auth state to ensure immediate UI update
+    setUser(null)
+    setProfile(null)
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {
