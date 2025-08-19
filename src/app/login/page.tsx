@@ -24,8 +24,8 @@ export default function LoginPage() {
       await signIn(email, password)
       toast.success(translations.loginSuccess)
       router.push('/')
-    } catch (error: any) {
-      toast.error(error.message || translations.loginError)
+    } catch (error: unknown) {
+      toast.error((error as Error).message || translations.loginError)
     } finally {
       setLoading(false)
     }

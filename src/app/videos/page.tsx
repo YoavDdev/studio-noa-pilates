@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { translations } from '@/lib/translations'
 import Link from 'next/link'
@@ -148,7 +148,7 @@ export default function VideosPage() {
     )
   }
 
-  const hasAccess = (video: any) => {
+  const hasAccess = (video: typeof allVideos[0]) => {
     if (!video.is_premium) return true
     return canAccessVideo(
       video.is_premium,

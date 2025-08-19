@@ -25,8 +25,8 @@ export default function RegisterPage() {
       await signUp(email, password, fullName)
       toast.success(translations.registerSuccess)
       router.push('/')
-    } catch (error: any) {
-      toast.error(error.message || translations.registerError)
+    } catch (error: unknown) {
+      toast.error((error as Error).message || translations.registerError)
     } finally {
       setLoading(false)
     }

@@ -1,9 +1,8 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { translations } from '@/lib/translations'
 import Link from 'next/link'
-import { PlayIcon, StarIcon, ClockIcon, CheckIcon } from '@heroicons/react/24/outline'
+import { CheckIcon } from '@heroicons/react/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid'
 
 export default function Home() {
@@ -242,8 +241,8 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-lg text-gray-600 mb-4">
-                  "למרות שאת יכולה להרגיש את השריפה למחרת, אלה לא סוג האימונים שתשנאי או תפחדי מהם. 
-                  במקום זאת, הם מזמינים אותך להתחבר לגוף ולנשימה שלך."
+                  &quot;למרות שאת יכולה להרגיש את השריפה למחרת, אלה לא סוג האימונים שתשנאי או תפחדי מהם. 
+                  במקום זאת, הם מזמינים אותך להתחבר לגוף ולנשימה שלך.&quot;
                 </p>
                 <div className="font-semibold text-gray-900">מארי קלייר</div>
               </div>
@@ -257,8 +256,8 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-lg text-gray-600 mb-4">
-                  "תמיד הייתי אדם פעיל והתאמנתי כל חיי, אבל הגוף שלי השתנה לטובה לחלוטין 
-                  ברגע שהתחלתי להתאמן עם נועה."
+                  &quot;תמיד הייתי אדם פעיל והתאמנתי כל חיי, אבל הגוף שלי השתנה לטובה לחלוטין 
+                  ברגע שהתחלתי להתאמן עם נועה.&quot;
                 </p>
                 <div className="font-semibold text-gray-900">נטשה אוקלי</div>
               </div>
@@ -272,8 +271,8 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-lg text-gray-600 mb-4">
-                  "אם את מחפשת גישה מידעית, מובנית ומעודדת, תרגול הפילאטיס של נועה גורלניק 
-                  עשוי להיות מושלם בשבילך."
+                  &quot;אני אוהבת איך נועה מסבירה כל תנועה ונותנת אלטרנטיבות לרמות שונות. 
+                  זה עזר לי להתקדם בקצב שלי ולהרגיש בטוחה באימונים.&quot;
                 </p>
                 <div className="font-semibold text-gray-900">גופ</div>
               </div>

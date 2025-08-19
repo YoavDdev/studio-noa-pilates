@@ -25,21 +25,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const supabase = createClientSupabase()
 
-  // If Supabase is not configured, provide a mock context
-  if (!supabase) {
-    const mockValue = {
-      user: null,
-      profile: null,
-      loading: false,
-      signIn: async () => { throw new Error('Supabase not configured') },
-      signUp: async () => { throw new Error('Supabase not configured') },
-      signOut: async () => { throw new Error('Supabase not configured') },
-      updateProfile: async () => { throw new Error('Supabase not configured') },
-    }
-    return <AuthContext.Provider value={mockValue}>{children}</AuthContext.Provider>
-  }
-
   useEffect(() => {
+    // If Supabase is not configured, skip initialization
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
+    const fetchProfile = async (userId: string) => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle()
+
+        // If no profile row exists yet, don't treat as a hard error
+        if (error) {
+          // PGRST116: No rows returned when expecting one
+          // Some environments return status 406 for maybeSingle no row
+          const code = (error as { code?: string })?.code
+          const status = (error as { status?: number })?.status
+          if (code === 'PGRST116' || status === 406) {
+            setProfile(null)
+            return
+          }
+          throw error
+        }
+
+        setProfile(data as Profile | null)
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+      }
+    }
+
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
@@ -56,11 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: any, session: any) => {
-        setUser(session?.user ?? null)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async (event: string, session: any) => {
+        const typedSession = session as { user?: User } | null
+        setUser(typedSession?.user ?? null)
         
-        if (session?.user) {
-          await fetchProfile(session.user.id)
+        if (typedSession?.user) {
+          await fetchProfile(typedSession.user.id)
         } else {
           setProfile(null)
         }
@@ -70,36 +91,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
-
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle()
-
-      // If no profile row exists yet, don't treat as a hard error
-      if (error) {
-        // PGRST116: No rows returned when expecting one
-        // Some environments return status 406 for maybeSingle no row
-        const code = (error as any)?.code
-        const status = (error as any)?.status
-        if (code === 'PGRST116' || status === 406) {
-          setProfile(null)
-          return
-        }
-        throw error
-      }
-
-      setProfile(data ?? null)
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-    }
-  }
+  }, [supabase])
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) throw new Error('Supabase not configured')
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -108,7 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    if (!supabase) throw new Error('Supabase not configured')
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -125,6 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
+    if (!supabase) throw new Error('Supabase not configured')
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     // Proactively clear local auth state to ensure immediate UI update
@@ -133,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return
+    if (!user || !supabase) return
     
     const { error } = await supabase
       .from('profiles')
@@ -143,6 +140,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
     
     setProfile(prev => prev ? { ...prev, ...updates } : null)
+  }
+
+  // If Supabase is not configured, provide a mock context
+  if (!supabase) {
+    const mockValue = {
+      user: null,
+      profile: null,
+      loading: false,
+      signIn,
+      signUp,
+      signOut,
+      updateProfile,
+    }
+    return <AuthContext.Provider value={mockValue}>{children}</AuthContext.Provider>
   }
 
   const value = {

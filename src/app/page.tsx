@@ -1,11 +1,9 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { translations } from '@/lib/translations'
 import Link from 'next/link'
 import Image from 'next/image'
-import { PlayIcon, StarIcon, ClockIcon, CheckIcon, HeartIcon, SparklesIcon } from '@heroicons/react/24/outline'
-import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid'
+import { PlayIcon, CheckIcon, HeartIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useEffect } from 'react'
 
 export default function Home() {

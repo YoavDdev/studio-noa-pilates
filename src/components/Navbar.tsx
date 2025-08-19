@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { translations } from '@/lib/translations'
@@ -10,10 +9,8 @@ import {
   HomeIcon, 
   PlayIcon, 
   CubeIcon, 
-  UserIcon,
   Bars3Icon,
-  XMarkIcon,
-  SparklesIcon
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 
 export default function Navbar() {
