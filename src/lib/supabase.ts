@@ -1,22 +1,31 @@
-import { createClient } from '@supabase/supabase-js'
 import { createBrowserClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Client-side Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Lazy singleton client strictly using real environment variables
+let supabaseSingleton: ReturnType<typeof createBrowserClient> | null = null
+
+export const getSupabaseClient = () => {
+  if (!supabaseUrl || !supabaseAnonKey || 
+      supabaseUrl.includes('your_supabase_project_url_here') ||
+      supabaseAnonKey.includes('your_supabase_anon_key_here') ||
+      !supabaseUrl.startsWith('https://') ||
+      !supabaseUrl.includes('.supabase.co')) {
+    console.error(
+      'Invalid Supabase configuration. Please update .env.local with real values from your Supabase project dashboard (Project Settings → API), then restart the dev server.'
+    )
+    return null
+  }
+  if (!supabaseSingleton) {
+    supabaseSingleton = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  }
+  return supabaseSingleton
+}
 
 // Client component client
 export const createClientSupabase = () => {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn('Supabase environment variables not configured. Please set up .env.local file.')
-    return null
-  }
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+  return getSupabaseClient()
 }
 
 // Database types
