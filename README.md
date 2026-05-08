@@ -12,14 +12,23 @@
 - ✅ **עיצוב רספונסיבי** - מותאם לכל המכשירים
 - ✅ **מועדפים ומעקב התקדמות** - תכונות אישיות למשתמשים
 
+---
+
 ## טכנולוגיות
 
 - **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS 4
 - **Database & Auth**: Supabase
 - **Payments**: PayPal
 - **Icons**: Heroicons
 - **Notifications**: React Hot Toast
+- **Video Player**: React Player
+- **Form Handling**: React Hook Form + Zod
+- **Date Utilities**: date-fns
+- **Charts**: Recharts (for analytics)
+- **Utilities**: clsx, tailwind-merge
+
+---
 
 ## הגדרה מקומית
 
@@ -170,6 +179,7 @@ src/
 ## תמיכה
 
 לשאלות ותמיכה, צור קשר עם המפתח או פתח issue בריפוזיטורי.
+
 
 ---
 

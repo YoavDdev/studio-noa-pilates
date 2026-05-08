@@ -6,28 +6,47 @@ CREATE TABLE profiles (
   id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
   email TEXT NOT NULL,
   full_name TEXT,
-  avatar_url TEXT,
-  subscription_type TEXT CHECK (subscription_type IN ('free', 'premium', 'package')) DEFAULT 'free',
-  subscription_expires_at TIMESTAMP WITH TIME ZONE,
-  lessons_remaining INTEGER DEFAULT 0,
+  -- ניהול מנויים מתקדם
+  subscription_id TEXT, -- PayPal ID, "Admin", "Trial", "Free", or null
+  user_type TEXT DEFAULT 'free', -- 'admin', 'premium', 'trial', 'free'
+  trial_start_date TIMESTAMP WITH TIME ZONE,
+  subscription_start_date TIMESTAMP WITH TIME ZONE,
+  cancellation_date TIMESTAMP WITH TIME ZONE,
+  -- PayPal cached data (למנוע קריאות מיותרות)
+  paypal_status TEXT, -- ACTIVE, CANCELLED, EXPIRED
+  paypal_id TEXT,
+  paypal_cancellation_date TIMESTAMP WITH TIME ZONE,
+  paypal_last_sync_at TIMESTAMP WITH TIME ZONE,
+  -- UX
+  has_seen_welcome_message BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- טבלת סרטונים
+-- טבלת סרטונים (Cache מ-Vimeo)
 CREATE TABLE videos (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  -- Vimeo data (מסונכרן אוטומטית)
+  vimeo_id TEXT NOT NULL UNIQUE, -- מזהה הסרטון ב-Vimeo
+  vimeo_uri TEXT, -- URI מלא מ-Vimeo (לדוגמה: /videos/123456789)
   title TEXT NOT NULL,
   description TEXT,
-  video_url TEXT NOT NULL,
   thumbnail_url TEXT,
   duration INTEGER, -- in seconds
-  focus_area TEXT NOT NULL,
-  style TEXT NOT NULL,
+  -- Metadata שלנו (נועה מגדירה)
+  focus_area TEXT, -- core, flexibility, strength, balance, rehabilitation
+  style TEXT, -- mat, classical, contemporary, seniors
   difficulty_level TEXT CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')) DEFAULT 'beginner',
-  is_premium BOOLEAN DEFAULT false,
+  is_premium BOOLEAN DEFAULT true, -- ברירת מחדל: פרימיום
+  category TEXT, -- קטגוריה ראשית
+  tags TEXT[], -- תגיות לחיפוש
+  -- Vimeo folder (לארגון)
+  vimeo_folder_id TEXT,
+  vimeo_folder_name TEXT,
+  -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  last_synced_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() -- מתי סונכרן מ-Vimeo
 );
 
 -- טבלת מועדפים
@@ -44,8 +63,10 @@ CREATE TABLE user_progress (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users ON DELETE CASCADE,
   video_id UUID REFERENCES videos ON DELETE CASCADE,
+  vimeo_id TEXT NOT NULL, -- גיבוי - אם הסרטון נמחק מה-DB
   completed BOOLEAN DEFAULT false,
   watch_time INTEGER DEFAULT 0, -- in seconds
+  resume_time FLOAT, -- זמן אחרון שנשמר (לחזרה למקום)
   completed_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -95,14 +116,35 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
--- הוספת סרטוני דמו
-INSERT INTO videos (title, description, video_url, thumbnail_url, duration, focus_area, style, difficulty_level, is_premium) VALUES
-('פילאטיס לליבה חזקה', 'שיעור מתמקד בחיזוק שרירי הליבה והשיפור היציבה', 'https://example.com/video1', 'https://example.com/thumb1.jpg', 1800, 'core', 'mat', 'beginner', false),
-('גמישות וזרימה', 'שיעור עדין לשיפור הגמישות והתנועתיות', 'https://example.com/video2', 'https://example.com/thumb2.jpg', 2700, 'flexibility', 'contemporary', 'intermediate', true),
-('פילאטיס מתקדם', 'אתגר לכל הגוף עם תרגילים מתקדמים', 'https://example.com/video3', 'https://example.com/thumb3.jpg', 3600, 'strength', 'classical', 'advanced', true),
-('איזון ויציבה', 'שיעור לשיפור האיזון והיציבה', 'https://example.com/video4', 'https://example.com/thumb4.jpg', 2400, 'balance', 'mat', 'intermediate', false),
-('פילאטיס לגיל הזהב', 'שיעור מותאם לגיל המבוגר', 'https://example.com/video5', 'https://example.com/thumb5.jpg', 2100, 'flexibility', 'seniors', 'beginner', true),
-('שיקום וחיזוק', 'שיעור לשיקום פציעות וחיזוק שרירים', 'https://example.com/video6', 'https://example.com/thumb6.jpg', 2700, 'rehabilitation', 'mat', 'beginner', true);
+-- הסרטונים ימולאו אוטומטית מ-Vimeo אחרי חיבור ה-API
+-- לא נוסיף סרטוני דמו - רק סרטונים אמיתיים של נועה!
+
+-- ========================================
+-- אינדקסים לביצועים מהירים
+-- ========================================
+
+-- חיפוש סרטונים
+CREATE INDEX idx_videos_vimeo_id ON videos(vimeo_id);
+CREATE INDEX idx_videos_difficulty ON videos(difficulty_level);
+CREATE INDEX idx_videos_category ON videos(category);
+CREATE INDEX idx_videos_is_premium ON videos(is_premium);
+CREATE INDEX idx_videos_folder ON videos(vimeo_folder_name);
+
+-- חיפוש משתמשים
+CREATE INDEX idx_profiles_email ON profiles(email);
+CREATE INDEX idx_profiles_user_type ON profiles(user_type);
+CREATE INDEX idx_profiles_subscription_id ON profiles(subscription_id);
+CREATE INDEX idx_profiles_paypal_status ON profiles(paypal_status);
+
+-- התקדמות משתמשים
+CREATE INDEX idx_progress_user_id ON user_progress(user_id);
+CREATE INDEX idx_progress_vimeo_id ON user_progress(vimeo_id);
+CREATE INDEX idx_progress_completed ON user_progress(completed);
+
+-- מועדפים
+CREATE INDEX idx_favorites_user_id ON user_favorites(user_id);
 
 -- הודעת הצלחה
 SELECT 'Database setup completed successfully! 🎉' as message;
+SELECT 'Created tables: profiles, videos, user_favorites, user_progress' as info;
+SELECT 'Added indexes for fast search and filtering' as info;
