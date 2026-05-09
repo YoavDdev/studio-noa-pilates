@@ -3,389 +3,262 @@
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import Image from 'next/image'
-import { PlayIcon, CheckIcon, HeartIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useEffect } from 'react'
 
 export default function Home() {
   const { user, profile } = useAuth()
 
-  // Scroll-trigger: add .in-view to .reveal-on-scroll when section enters viewport
   useEffect(() => {
     const containers = Array.from(document.querySelectorAll<HTMLElement>('.reveal-on-scroll'))
-
     if (containers.length === 0) return
-
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReduced) {
-      containers.forEach((el) => el.classList.add('in-view'))
-      return
-    }
-
+    if (prefersReduced) { containers.forEach((el) => el.classList.add('in-view')); return }
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const target = entry.target as HTMLElement
           if (entry.isIntersecting) {
-            target.classList.add('in-view')
-            observer.unobserve(target)
+            (entry.target as HTMLElement).classList.add('in-view')
+            observer.unobserve(entry.target)
           }
         })
       },
-      {
-        root: null,
-        threshold: 0.15,
-        rootMargin: '0px 0px -10% 0px',
-      }
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
     )
-
     containers.forEach((el) => observer.observe(el))
     return () => observer.disconnect()
   }, [])
 
   return (
-    <div className="min-h-screen image-text-contrast">
-      {/* Site-wide Background Image */}
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src="/img/315649_65c0b7b669363.jpg"
-          alt="רקע הסטודיו של נועה"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-bottom"
-        />
-        {/* Soft overlay for readability across the page */}
-        <div className="absolute inset-0 "></div>
-      </div>
-      {/* Hero Section - Personal, inviting, Noa-forward */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        
-        
-        {/* Content */}
-        <div className="container relative z-10 text-center image-text-contrast text-white">
-          <div className="mx-auto">
-            <h1 className="heading-xl mb-6 fade-in-up" style={{ animationDelay: '0s' }}>
-              הסטודיו שלו נועה גורלינק
-            </h1>
-            <p className="body-lg mb-4 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
-              מביאה חיזוק, רכות וריפוי.
-            </p>
-            <p className="quote-xl mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.2s' }}>
-              <span
-                className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-warm-terracotta)] to-[var(--color-accent-coral)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
-                style={{ fontFamily: 'var(--font-quote)' }}
-              >
-                ״יש לך אותך״
-              </span>
-            </p>
-            <p className="body-md mb-10 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.3s' }}>
-              בעלת סטודיו פילאטיס מזרן • פילאטיס לכל הרמות • לנשים בהריון • לאחר לידה • בייבילאטיס • שיטת הפלייסטיק • יוגה האטה • ויניאסה • פאוור ויניאסה
-            </p>
-            
-            {!user ? (
-              <div className="space-y-6">
-                <Link href="/register" className="btn-primary text-lg px-10 py-4 fade-in-up" style={{ animationDelay: '0.45s' }}>
-                  <SparklesIcon className="w-5 h-5" />
-                  התחלי 7 ימים חינם
-                </Link>
-              </div>
-            ) : (
-              <div className="card max-w-md mx-auto text-center">
-                <h3 className="heading-sm mb-4 text-[var(--color-charcoal)]">שלום {profile?.full_name}!</h3>
-                {profile?.subscription_type === 'premium' ? (
-                  <p className="body-md text-[var(--color-deep-sage)] mb-4 font-medium">יש לך גישה פרימיום פעילה</p>
-                ) : profile?.subscription_type === 'package' && profile?.lessons_remaining ? (
-                  <p className="body-md text-[var(--color-deep-sage)] mb-4 font-medium">
-                    נותרו לך {profile.lessons_remaining} שיעורים
-                  </p>
-                ) : (
-                  <p className="body-md text-[var(--color-soft-charcoal)] mb-4">גישה חופשית</p>
-                )}
-                <Link href="/videos" className="btn-primary">
-                  <PlayIcon className="w-5 h-5" />
-                  המשך לשיעורים
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+    <main className="min-h-screen bg-[#FAF8F3] text-[#1A130A]">
 
-      
+      {/* ═══════════════════════════════════════
+          HERO — Editorial split layout
+      ═══════════════════════════════════════ */}
+      <section className="relative min-h-screen grid md:grid-cols-2">
 
-      {/* Our Classes Section - Noa style */}
-      <section className="section-padding bg-[var(--color-warm-gray)]/70 reveal-on-scroll">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="heading-lg text-[var(--color-charcoal)] mb-6 fade-in-up" style={{ animationDelay: '0s' }}>
-              איזה שיעור מתאים לך היום?
-            </h2>
-            <p className="body-lg text-[var(--color-soft-charcoal)] fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
-              אני מזמינה אותך לבחור שיעור על פי התחושה שלך עכשיו — נשימה, רכות, או חיזוק עדין שמחזיר יציבות.
-            </p>
-            <div className="h-px w-24 bg-[var(--color-soft-terracotta)]/50 mx-auto mt-4 fade-in-up" style={{ animationDelay: '0.2s' }}></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <Link
-              href="/videos"
-              className="card block text-center group hover:shadow-md hover:-translate-y-0.5 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm-terracotta)]/40 fade-in-up"
-              style={{ animationDelay: '0.25s' }}
-            >
-              <h3 className="heading-sm mb-3 text-[var(--color-charcoal)] group-hover:underline decoration-[var(--color-warm-terracotta)] underline-offset-4">
-                בוקר עדין להתעוררות
-              </h3>
-              <p className="body-md text-[var(--color-soft-charcoal)]">נשימה רכה ומתיחות עדינות לפתוח את הגוף והלב — להתחיל מחדש.</p>
-              <span className="body-sm text-[var(--color-warm-terracotta)] mt-3 inline-block">לחצי כדי לצפות</span>
-            </Link>
-            <Link
-              href="/videos"
-              className="card block text-center group md:shadow-lg md:-translate-y-1.5 md:scale-[1.02] transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm-terracotta)]/40 fade-in-up"
-              style={{ animationDelay: '0.35s' }}
-            >
-              <h3 className="heading-sm mb-3 text-[var(--color-charcoal)] group-hover:underline decoration-[var(--color-warm-terracotta)] underline-offset-4">
-                חיזוק רך שמחזיר יציבות
-              </h3>
-              <p className="body-md text-[var(--color-soft-charcoal)]">תנועה מודעת שמייצבת ומחזקת — בקצב שלך, באהבה לגוף שלך.</p>
-              <span className="body-sm text-[var(--color-warm-terracotta)] mt-3 inline-block">לחצי כדי לצפות</span>
-            </Link>
-            <Link
-              href="/videos"
-              className="card block text-center group hover:shadow-md hover:-translate-y-0.5 transition cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-warm-terracotta)]/40 fade-in-up"
-              style={{ animationDelay: '0.45s' }}
-            >
-              <h3 className="heading-sm mb-3 text-[var(--color-charcoal)] group-hover:underline decoration-[var(--color-warm-terracotta)] underline-offset-4">
-                לנשום מחדש בכל רמה
-              </h3>
-              <p className="body-md text-[var(--color-soft-charcoal)]">מתחילות או מתקדמות — את בוחרת לעצמך, אני כאן להחזיק אותך בדרך.</p>
-              <span className="body-sm text-[var(--color-warm-terracotta)] mt-3 inline-block">לחצי כדי לצפות</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-
-            {/* For Every Body - Redesigned */}
-            <section className="section-padding reveal-on-scroll">
-        <div className="container text-center">
-          <h2 className="heading-lg text-white mb-8 fade-in-up" style={{ animationDelay: '0s' }}>
-            לכל גוף
-          </h2>
-          <p className="body-lg text-white mb-12 fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
-            זה הרבה מעבר לאימון. זו קהילה רכה ומחזיקה של נשים שבוחרות לנשום, לנוע ולהקשיב לגוף.
-            בכל גיל ובכל רמה — את מתקבלת כפי שאת. בכל שבוע אנחנו מתרגלות יחד ומגלות
-            כמה תנועה קטנה יכולה לשנות יום שלם — לנפש ולגוף.
+        {/* Right: Text */}
+        <div className="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-24 md:py-0 order-2 md:order-1">
+          <p className="font-body text-xs tracking-[0.25em] uppercase text-[#9C8E7E] mb-8 fade-in-up" style={{ animationDelay: '0s' }}>
+            מורה לתנועה ונשימה
           </p>
-          <Link href="/register" className="btn-primary text-lg px-10 py-4 fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <HeartIcon className="w-5 h-5" />
-            התחלי 7 ימים חינם
-          </Link>
-        </div>
-      </section>
-
-      {/* Meet Your Instructor - Noa style */}
-      <section className="section-padding bg-[var(--color-warm-gray)]/70 reveal-on-scroll">
-        <div className="container">
-          <div className="text-center mb-16">
-            <h2 className="heading-lg text-[var(--color-charcoal)] mb-6 fade-in-up" style={{ animationDelay: '0s' }}>נעים להכיר,</h2>
-          </div>
-
-          <div className="card mx-auto fade-in-up" style={{ animationDelay: '0.15s' }}>
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div className="fade-in-up" style={{ animationDelay: '0.25s' }}>
-                <p className="body-lg text-[var(--color-soft-charcoal)] mb-8 leading-relaxed">
-                  אני נועה גורלניק. מאז 2015 אני מלווה נשים בתהליך עדין ומדויק של חיבור לגוף, לרצפה ולנשימה. באימון איתי אין מאבק ואין הוכחות — יש הקשבה, רוך, וחיזוק שמחזיר ביטחון מבפנים. אני מתמחה בפילאטיס מזרן ובגישות שיקומיות מודרניות מתוך הקלאסי (Contrology), ומשלבת עקרונות של פלדנקרייז ונשימה מודעת. הסטודיו פתוח לכל הרמות, לנשים בהריון ולאחר לידה, וגם למי שרוצה להתחיל מחדש — לאט, בחמלה. הפילוסופיה שלי פשוטה: יש לך אותך. האחריות לגוף, לבחירה ולמחשבה — היא שלך, ואני כאן להחזיק מרחב בטוח, אוהב ומאפשר לתנועה שמרפאת.
-                </p>
-              </div>
-              <div className="relative aspect-square rounded-3xl overflow-hidden shadow-sm fade-in-up" style={{ animationDelay: '0.35s' }}>
-                <Image
-                  src="/img/noa_about.jpg"
-                  alt="נועה גורלניק"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-top"
-                />
-              </div>
+          <h1 className="font-heading text-[clamp(4rem,8vw,7rem)] font-light leading-[0.95] text-[#0F0A05] mb-8 fade-in-up" style={{ animationDelay: '0.1s' }}>
+            נועה<br />גורלניק
+          </h1>
+          <div className="w-12 h-px bg-[#B8935A] mb-8 fade-in-up" style={{ animationDelay: '0.2s' }} />
+          <p className="font-heading text-xl md:text-2xl font-light leading-relaxed text-[#5C4D3C] mb-10 max-w-md fade-in-up" style={{ animationDelay: '0.25s' }}>
+            רב הנסתר על הגלוי.<br />
+            גופנו הוא בית מקדש —<br />
+            ואין תנועה שאינה נכונה.
+          </p>
+          {!user ? (
+            <div className="flex flex-wrap gap-4 fade-in-up" style={{ animationDelay: '0.35s' }}>
+              <Link href="/register"
+                className="inline-flex items-center gap-3 bg-[#0F0A05] text-[#FAF8F3] font-body text-sm tracking-wider px-8 py-4 hover:bg-[#B8935A] transition-colors duration-300">
+                התחילי מסע
+              </Link>
+              <Link href="/videos"
+                className="inline-flex items-center gap-3 border border-[#E8E2D9] text-[#1A130A] font-body text-sm tracking-wider px-8 py-4 hover:border-[#B8935A] hover:text-[#B8935A] transition-colors duration-300">
+                לספריית השיעורים
+              </Link>
             </div>
+          ) : (
+            <div className="fade-in-up" style={{ animationDelay: '0.35s' }}>
+              <p className="font-body text-[#5C4D3C] mb-4">
+                שלום {profile?.full_name?.split(' ')[0]} —
+                {profile?.subscription_type === 'premium' ? ' המנוי שלך פעיל' : ' ברוכה הבאה'}
+              </p>
+              <Link href="/videos"
+                className="inline-flex items-center gap-3 bg-[#0F0A05] text-[#FAF8F3] font-body text-sm tracking-wider px-8 py-4 hover:bg-[#B8935A] transition-colors duration-300">
+                המשיכי לתרגל
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Left: Image */}
+        <div className="relative min-h-[50vh] md:min-h-screen order-1 md:order-2 overflow-hidden">
+          <Image
+            src="/img/468399876_122127044720380852_7297415422565837152_n.jpg"
+            alt="נועה גורלניק"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#FAF8F3]/20" />
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#9C8E7E] opacity-60">
+          <div className="w-px h-12 bg-[#9C8E7E] animate-pulse" />
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          ABOUT — Centered, poetic
+      ═══════════════════════════════════════ */}
+      <section className="section-padding reveal-on-scroll border-t border-[#E8E2D9]">
+        <div className="max-w-3xl mx-auto px-6 md:px-12 text-center">
+          <p className="font-body text-xs tracking-[0.25em] uppercase text-[#9C8E7E] mb-10 fade-in-up" style={{ animationDelay: '0s' }}>
+            קצת עלי
+          </p>
+          <h2 className="font-heading text-[clamp(2.5rem,5vw,4rem)] font-light text-[#0F0A05] mb-10 fade-in-up" style={{ animationDelay: '0.1s' }}>
+            נעים להכיר
+          </h2>
+          <div className="w-8 h-px bg-[#B8935A] mx-auto mb-10 fade-in-up" style={{ animationDelay: '0.15s' }} />
+          <p className="font-heading text-lg md:text-xl font-light leading-[2] text-[#5C4D3C] mb-6 fade-in-up" style={{ animationDelay: '0.2s' }}>
+            אמא לשניים, בת 34, חיה את עולם התנועה מגיל 4.
+          </p>
+          <p className="font-body text-base leading-8 text-[#5C4D3C] mb-8 fade-in-up" style={{ animationDelay: '0.25s' }}>
+            מ-2015 נכנסתי להדריך אינספור אנשים ולטפל ממקום של הקשבה, הנאה ולא מאבק —
+            ליצור חיבור של הרמוניה, אהבה וריפוי.
+            יציאה לחקירה וגילויים, לשחרר את האוטומט שאנחנו חיים בו.
+          </p>
+          <p className="font-body text-sm tracking-wider text-[#9C8E7E] fade-in-up" style={{ animationDelay: '0.3s' }}>
+            Contrology · Flystick · כוח · גמישות · ריקוד מודרני · Movement · נשימה · תודעה
+          </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════
+          CLASSES — 3 columns, minimal
+      ═══════════════════════════════════════ */}
+      <section className="section-padding reveal-on-scroll bg-[#F5F0E8]">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-center mb-16">
+            <p className="font-body text-xs tracking-[0.25em] uppercase text-[#9C8E7E] mb-4 fade-in-up">מרחב השיעורים</p>
+            <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#0F0A05] fade-in-up" style={{ animationDelay: '0.1s' }}>
+              בחרי את הדרך שלך
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-px bg-[#E8E2D9]">
+            {[
+              { emoji: '🌬️', title: 'נשימה', desc: 'חזרה לבסיס. כל שינוי מתחיל בנשימה אחת מודעת.', href: '/videos' },
+              { emoji: '🏠', title: 'עשו את זה בבית', desc: 'שיעורים שמותאמים לכל מרחב — בלי ציוד, בלי תירוצים.', href: '/videos' },
+              { emoji: '✨', title: 'פיטנס ופלייסטיק', desc: 'כוח, גמישות וזרימה — דרך מקל הפלייסטיק הייחודי.', href: '/videos' },
+            ].map((item, i) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="group block bg-[#FAF8F3] p-10 md:p-14 hover:bg-[#EFE3CC] transition-colors duration-500 fade-in-up"
+                style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+              >
+                <div className="text-3xl mb-6">{item.emoji}</div>
+                <h3 className="font-heading text-2xl font-light text-[#0F0A05] mb-4 group-hover:text-[#B8935A] transition-colors duration-300">
+                  {item.title}
+                </h3>
+                <p className="font-body text-sm leading-7 text-[#5C4D3C]">{item.desc}</p>
+                <div className="mt-8 w-0 h-px bg-[#B8935A] group-hover:w-12 transition-all duration-500" />
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* ═══════════════════════════════════════
+          QUOTE — Full width, dark section
+      ═══════════════════════════════════════ */}
+      <section className="py-28 md:py-40 bg-[#0F0A05] reveal-on-scroll">
+        <div className="max-w-3xl mx-auto px-6 md:px-12 text-center">
+          <p className="font-heading text-[clamp(1.75rem,4vw,3rem)] font-light text-[#EFE3CC] leading-[1.7] fade-in-up">
+            "מזמינה אתכם להתאהב בעצמכם מחדש —<br />
+            מרחב בטוח להיות בנוכחות,<br />
+            ולגלות תוך המסע המטורף<br />
+            התעוררות חדשה."
+          </p>
+          <div className="mt-10 w-8 h-px bg-[#B8935A] mx-auto fade-in-up" style={{ animationDelay: '0.2s' }} />
+        </div>
+      </section>
 
-      <div className="section-divider bg-white"></div>
-      
-      {/* Pricing - Noa style */}
-      <section className="section-padding bg-[var(--color-warm-gray)]/70 reveal-on-scroll">
-        <div className="container max-w-4xl">
+      {/* ═══════════════════════════════════════
+          PRICING — Clean, two cards
+      ═══════════════════════════════════════ */}
+      <section className="section-padding reveal-on-scroll">
+        <div className="max-w-4xl mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
-            <h2 className="heading-lg text-[var(--color-charcoal)] mb-6 fade-in-up" style={{ animationDelay: '0s' }}>
+            <p className="font-body text-xs tracking-[0.25em] uppercase text-[#9C8E7E] mb-4 fade-in-up">הצטרפי</p>
+            <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#0F0A05] mb-4 fade-in-up" style={{ animationDelay: '0.1s' }}>
               7 ימים חינם
             </h2>
-            <p className="body-lg text-[var(--color-soft-charcoal)] fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
-              מעל 300 שיעורים לנשימה, רכות וחיזוק עדין — בקצב שלך, באהבה לגוף שלך.
+            <p className="font-body text-[#5C4D3C] fade-in-up" style={{ animationDelay: '0.15s' }}>
+              מעל 300 שיעורים — בקצב שלך, באהבה לגוף שלך.
             </p>
-            <div className="h-px w-24 bg-[var(--color-soft-terracotta)]/50 mx-auto mt-4 fade-in-up" style={{ animationDelay: '0.2s' }}></div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="card fade-in-up" style={{ animationDelay: '0.25s' }}>
-              <div className="text-center mb-8">
-                <h3 className="heading-sm text-[var(--color-charcoal)] mb-4">חבילת שיעורים</h3>
-                <div className="heading-lg text-[var(--color-warm-terracotta)] mb-2">₪200</div>
-                <div className="body-md text-[var(--color-soft-charcoal)]">5 שיעורים</div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">5 שיעורים מלאים</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">גישה למשך 3 חודשים</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">תמיכה מלאה</span>
-                </li>
+            {/* Package */}
+            <div className="border border-[#E8E2D9] p-10 fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <p className="font-body text-xs tracking-widest uppercase text-[#9C8E7E] mb-6">חבילה</p>
+              <div className="font-heading text-6xl font-light text-[#0F0A05] mb-1">₪200</div>
+              <p className="font-body text-sm text-[#9C8E7E] mb-8">5 שיעורים · גישה ל-3 חודשים</p>
+              <ul className="space-y-3 mb-10">
+                {['5 שיעורים מלאים', 'גישה ל-3 חודשים', 'תמיכה מלאה'].map(f => (
+                  <li key={f} className="font-body text-sm text-[#5C4D3C] flex items-center gap-3">
+                    <span className="w-1 h-1 rounded-full bg-[#B8935A] flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
               </ul>
-              <Link href="/packages" className="btn-secondary w-full justify-center">
-                התחלי עכשיו
+              <Link href="/packages"
+                className="block text-center border border-[#0F0A05] font-body text-sm tracking-wider py-4 hover:bg-[#0F0A05] hover:text-white transition-colors duration-300">
+                בחרי חבילה
               </Link>
             </div>
 
-            <div className="card border-2 border-[var(--color-warm-terracotta)] relative overflow-hidden fade-in-up" style={{ animationDelay: '0.35s' }}>
-              <div className="text-center mb-8">
-                <h3 className="heading-sm text-[var(--color-charcoal)] mb-4">מנוי חודשי</h3>
-                <div className="heading-lg text-[var(--color-warm-terracotta)] mb-2">₪99</div>
-                <div className="body-md text-[var(--color-soft-charcoal)]">לחודש</div>
-              </div>
-              <ul className="space-y-4 mb-8">
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">גישה לכל השיעורים</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">תוכניות מותאמות לכל רמה</span>
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon className="w-5 h-5 text-[var(--color-sage)] ml-2 flex-shrink-0" />
-                  <span className="body-md text-[var(--color-charcoal)]">גישה מלאה בקהילה תומכת</span>
-                </li>
+            {/* Monthly */}
+            <div className="bg-[#0F0A05] p-10 fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <p className="font-body text-xs tracking-widest uppercase text-[#9C8E7E] mb-6">מנוי חודשי</p>
+              <div className="font-heading text-6xl font-light text-[#EFE3CC] mb-1">₪99</div>
+              <p className="font-body text-sm text-[#9C8E7E] mb-8">לחודש · ביטול בכל עת</p>
+              <ul className="space-y-3 mb-10">
+                {['גישה לכל השיעורים', 'תוכניות לכל רמה', 'קהילה תומכת'].map(f => (
+                  <li key={f} className="font-body text-sm text-[#B8CEBC] flex items-center gap-3">
+                    <span className="w-1 h-1 rounded-full bg-[#B8935A] flex-shrink-0" />
+                    {f}
+                  </li>
+                ))}
               </ul>
-              <Link href="/register" className="btn-primary w-full justify-center">
+              <Link href="/register"
+                className="block text-center bg-[#B8935A] text-[#0F0A05] font-body text-sm tracking-wider py-4 hover:bg-[#EFE3CC] transition-colors duration-300">
                 נסי 7 ימים חינם
               </Link>
             </div>
           </div>
         </div>
       </section>
-      <div className="section-divider"></div>
 
-      {/* Contact - Beautiful Form */}
-      <section className="section-padding bg-[var(--color-warm-gray)]/70 reveal-on-scroll">
-        <div className="container max-w-3xl">
-          <div className="text-center mb-16">
-            <h2 className="heading-lg text-[var(--color-charcoal)] mb-6 fade-in-up" style={{ animationDelay: '0s' }}>בואי נדבר</h2>
-            <p className="body-lg text-[var(--color-soft-charcoal)] leading-relaxed fade-in-up" style={{ textAlign: 'center', animationDelay: '0.1s' }}>
-              יש לך שאלות על הפילאטיס? רוצה לדעת איך להתחיל?<br />
-              אני כאן בשבילך — בואי ניצור קשר.
-            </p>
-            <div className="h-px w-24 bg-[var(--color-soft-terracotta)]/50 mx-auto mt-6 fade-in-up" style={{ animationDelay: '0.2s' }}></div>
-          </div>
-
-          <div className="card bg-white/90 backdrop-blur-sm shadow-xl fade-in-up" style={{ animationDelay: '0.25s' }}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const form = e.currentTarget as HTMLFormElement;
-                const name = (form.elements.namedItem('name') as HTMLInputElement)?.value || '';
-                const email = (form.elements.namedItem('email') as HTMLInputElement)?.value || '';
-                const message = (form.elements.namedItem('message') as HTMLTextAreaElement)?.value || '';
-                const subject = encodeURIComponent(`פניה מהאתר — ${name}`);
-                const body = encodeURIComponent(`שם: ${name}\nאימייל: ${email}\n\nהודעה:\n${message}`);
-                window.location.href = `mailto:noa@studio-noa-pilates.com?subject=${subject}&body=${body}`;
-              }}
-              className="space-y-8"
+      {/* ═══════════════════════════════════════
+          CONTACT — Minimal, warm
+      ═══════════════════════════════════════ */}
+      <section className="section-padding reveal-on-scroll border-t border-[#E8E2D9]">
+        <div className="max-w-2xl mx-auto px-6 md:px-12 text-center">
+          <p className="font-body text-xs tracking-[0.25em] uppercase text-[#9C8E7E] mb-6 fade-in-up">צרי קשר</p>
+          <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#0F0A05] mb-4 fade-in-up" style={{ animationDelay: '0.1s' }}>
+            בואי נדבר
+          </h2>
+          <p className="font-body text-[#5C4D3C] mb-12 fade-in-up" style={{ animationDelay: '0.15s' }}>
+            שאלות? רוצה להתחיל? אני כאן.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <a
+              href="mailto:noa@studio-noa.com"
+              className="inline-flex items-center justify-center gap-3 border border-[#0F0A05] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#0F0A05] hover:text-white transition-colors duration-300"
             >
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-2">
-                  <label className="block body-sm font-medium text-[var(--color-charcoal)]">שם מלא</label>
-                  <input 
-                    name="name" 
-                    type="text" 
-                    required 
-                    className="input w-full bg-[var(--color-warm-gray)]/40 focus:bg-[var(--color-warm-gray)]/50 border border-[var(--color-warm-gray)]/60 focus:border-[var(--color-warm-terracotta)] text-[var(--color-charcoal)] placeholder:text-[var(--color-soft-charcoal)]/70 focus:ring-2 focus:ring-[var(--color-warm-terracotta)]/30 transition-all duration-200" 
-                    placeholder="איך קוראים לך?"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block body-sm font-medium text-[var(--color-charcoal)]">אימייל</label>
-                  <input 
-                    name="email" 
-                    type="email" 
-                    required 
-                    className="input w-full bg-[var(--color-warm-gray)]/40 focus:bg-[var(--color-warm-gray)]/50 border border-[var(--color-warm-gray)]/60 focus:border-[var(--color-warm-terracotta)] text-[var(--color-charcoal)] placeholder:text-[var(--color-soft-charcoal)]/70 focus:ring-2 focus:ring-[var(--color-warm-terracotta)]/30 transition-all duration-200" 
-                    placeholder="your.name@gmail.com"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="block body-sm font-medium text-[var(--color-charcoal)]">ההודעה שלך</label>
-                <textarea 
-                  name="message" 
-                  required 
-                  rows={6} 
-                  className="input w-full min-h-[160px] bg-[var(--color-warm-gray)]/40 focus:bg-[var(--color-warm-gray)]/50 border border-[var(--color-warm-gray)]/60 focus:border-[var(--color-warm-terracotta)] text-[var(--color-charcoal)] placeholder:text-[var(--color-soft-charcoal)]/70 focus:ring-2 focus:ring-[var(--color-warm-terracotta)]/30 transition-all duration-200" 
-                  placeholder="ספרי לי קצת על עצמך... מה את מחפשת? יש לך ניסיון קודם בפילאטיס? או כל שאלה אחרת שחשובה לך"
-                ></textarea>
-                <p className="body-sm text-[var(--color-soft-charcoal)] flex items-center gap-2">
-                  <svg className="w-4 h-4 text-[var(--color-warm-terracotta)]" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                  </svg>
-                  אני אחזור אליך תוך 24 שעות
-                </p>
-              </div>
-
-              <div className="border-t border-[var(--color-warm-gray)]/30 pt-8">
-                <div className="flex flex-col sm:flex-row gap-6 items-center justify-center">
-                  <button 
-                    type="submit" 
-                    className="btn-primary flex items-center gap-3 px-8 py-4 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    שלחי הודעה
-                  </button>
-                  
-                  <div className="flex items-center gap-4">
-                    <div className="h-px w-8 bg-[var(--color-warm-gray)]"></div>
-                    <span className="text-[var(--color-soft-charcoal)] body-sm">או</span>
-                    <div className="h-px w-8 bg-[var(--color-warm-gray)]"></div>
-                  </div>
-                  
-                  <Link
-                    href="https://wa.me/972526123456?text=היי%20נועה,%20אשמח%20לשמוע%20עוד%20על%20השיעורים"
-                    target="_blank"
-                    className="btn-secondary flex items-center gap-3 px-8 py-4 text-lg shadow-md hover:shadow-lg transition-all duration-300"
-                  >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.787"/>
-                    </svg>
-                    וואטסאפ
-                  </Link>
-                </div>
-              </div>
-            </form>
+              אימייל
+            </a>
+            <a
+              href="https://wa.me/972500000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-3 bg-[#0F0A05] text-[#FAF8F3] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#B8935A] transition-colors duration-300"
+            >
+              וואטסאפ
+            </a>
           </div>
-
         </div>
       </section>
 
-
-
-    </div>
+    </main>
   )
 }

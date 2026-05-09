@@ -121,12 +121,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    if (!supabase) throw new Error('Supabase not configured')
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    // Proactively clear local auth state to ensure immediate UI update
+    if (!supabase) {
+      console.log('Supabase not configured - clearing local state')
+      setUser(null)
+      setProfile(null)
+      return
+    }
+    
+    console.log('Signing out...')
+    
+    // Clear local state immediately for better UX
     setUser(null)
     setProfile(null)
+    
+    // Try to sign out from Supabase with timeout
+    try {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 3000)
+      )
+      
+      const signOutPromise = supabase.auth.signOut()
+      
+      await Promise.race([signOutPromise, timeoutPromise])
+      console.log('Successfully signed out from Supabase')
+    } catch (error) {
+      console.log('Sign out completed with timeout or error, but local state already cleared:', error)
+      // Don't throw - we already cleared local state
+    }
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {

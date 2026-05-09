@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen">
         <AuthProvider>
           <Navbar />
-          <main>{children}</main>
+          {children}
           <Footer />
           <Toaster 
             position="top-center" 
