@@ -3,12 +3,13 @@ import { createClient } from '@/lib/supabase/server'
 import { getCurrentUserProfile } from '@/lib/auth-helpers'
 import Link from 'next/link'
 import Image from 'next/image'
-import { PlayIcon, SparklesIcon, ClockIcon, StarIcon } from '@heroicons/react/24/outline'
+import { PlayIcon, SparklesIcon, StarIcon } from '@heroicons/react/24/outline'
 
 export default async function VideosPage() {
   const profile = await getCurrentUserProfile()
 
   // משיכת תיקיות ישירות מ-Vimeo
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let folders: any[] = []
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/folders`, {

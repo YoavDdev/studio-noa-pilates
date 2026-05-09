@@ -224,6 +224,6 @@ export const getFolderMetadata = (folderName: string): FolderMetadata => {
 // Get only visible folders
 export const getVisibleFolders = (): Record<string, FolderMetadata> => {
   return Object.fromEntries(
-    Object.entries(folderMetadata).filter(([_, metadata]) => metadata.isVisible)
+    Object.entries(folderMetadata).filter(([, metadata]) => metadata.isVisible)
   )
 }

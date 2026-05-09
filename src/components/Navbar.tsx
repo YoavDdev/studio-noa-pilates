@@ -115,7 +115,7 @@ export default function Navbar() {
                       onClick={() => setIsUserMenuOpen(false)}>
                       הפרופיל שלי
                     </Link>
-                    {(profile as any)?.is_admin && (
+                    {(profile as { is_admin?: boolean } | null)?.is_admin && (
                       <Link href="/admin"
                         className="block px-5 py-3 font-body text-sm text-[#5C4D3C] hover:bg-[#F5F0E8] hover:text-[#0F0A05] transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}>
@@ -179,7 +179,7 @@ export default function Navbar() {
             <div className="space-y-1">
               <p className="font-body text-xs text-[#9C8E7E] mb-4">{user.email}</p>
               <Link href="/profile" className="block py-3 font-body text-sm text-[#5C4D3C] border-b border-[#E8E2D9]" onClick={() => setIsMenuOpen(false)}>הפרופיל שלי</Link>
-              {(profile as any)?.is_admin && (
+              {(profile as { is_admin?: boolean } | null)?.is_admin && (
                 <Link href="/admin" className="block py-3 font-body text-sm text-[#5C4D3C] border-b border-[#E8E2D9]" onClick={() => setIsMenuOpen(false)}>ניהול מערכת</Link>
               )}
               <button 
