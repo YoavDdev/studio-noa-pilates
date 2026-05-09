@@ -23,8 +23,14 @@ export default function RegisterPage() {
 
     try {
       await signUp(email, password, fullName)
-      toast.success(translations.registerSuccess)
-      router.push('/')
+      toast.success(
+        'נשלח מייל אישור! 📧\nבדקי את תיבת הדואר שלך (וגם בספאם) ולחצי על הקישור לאישור ההרשמה.',
+        { duration: 8000 }
+      )
+      // Don't redirect - let user see the message
+      setEmail('')
+      setPassword('')
+      setFullName('')
     } catch (error: unknown) {
       toast.error((error as Error).message || translations.registerError)
     } finally {
