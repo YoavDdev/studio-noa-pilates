@@ -34,6 +34,7 @@ export async function GET() {
 
     // Combine Vimeo folders with metadata
     const foldersWithMetadata = await Promise.all(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vimeoFolders.map(async (folder: any) => {
         const metadata = getFolderMetadata(folder.name)
         

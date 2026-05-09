@@ -41,6 +41,7 @@ export async function GET(
     }
 
     const foldersData = await foldersResponse.json()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const targetFolder = foldersData.data?.find((f: any) => f.name === decodedFolderName)
 
     if (!targetFolder) {
@@ -68,12 +69,14 @@ export async function GET(
     const allFolders = foldersData.data || []
     console.log(`🔎 Looking for subfolders of: ${decodedFolderName}`)
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const subfolders = allFolders.filter((folder: any) => {
       const ancestorPath = folder.metadata?.connections?.ancestor_path || []
       
       // Debug log
       if (folder.name.includes('חיזוק') || folder.name.includes('שחרור') || folder.name.includes('רצפה')) {
         console.log(`📂 Checking folder: ${folder.name}`)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         console.log(`   ancestorPath:`, ancestorPath.map((a: any) => a.name))
       }
       
@@ -90,6 +93,7 @@ export async function GET(
       }
       
       return isMatch
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }).map((folder: any) => {
       const subMetadata = getFolderMetadata(folder.name)
       return {
@@ -109,6 +113,7 @@ export async function GET(
         videoCount: videos.length
       },
       subfolders,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       videos: videos.map((video: any) => ({
         uri: video.uri,
         name: video.name,

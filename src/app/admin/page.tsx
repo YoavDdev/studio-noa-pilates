@@ -158,7 +158,7 @@ export default async function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">-</div>
-              <div className="text-gray-600 text-sm mt-2">סה"כ משתמשים</div>
+              <div className="text-gray-600 text-sm mt-2">סה&quot;כ משתמשים</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600">-</div>
