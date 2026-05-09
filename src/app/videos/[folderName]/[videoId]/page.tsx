@@ -1,4 +1,4 @@
-import { getCurrentUserProfile, getUserType, hasAccessToPremiumContent } from '@/lib/auth-helpers'
+import { getCurrentUserProfile, hasAccessToPremiumContent } from '@/lib/auth-helpers'
 import Link from 'next/link'
 import { ArrowRightIcon } from '@heroicons/react/24/outline'
 import { notFound, redirect } from 'next/navigation'
@@ -28,6 +28,7 @@ export default async function VideoPage({ params }: Props) {
   }
 
   // Fetch video details from Vimeo
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let videoData: any = null
   try {
     const response = await fetch(

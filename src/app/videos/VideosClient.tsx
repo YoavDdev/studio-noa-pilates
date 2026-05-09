@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { PlayIcon, ClockIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import { StarIcon as StarOutlineIcon } from '@heroicons/react/24/outline'
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid'
@@ -215,10 +216,11 @@ export default function VideosClient({ videos, profile, initialFavorites }: Vide
                 {/* Thumbnail */}
                 <div className="relative aspect-video bg-gradient-to-br from-purple-100 to-pink-100">
                   {video.thumbnail_url ? (
-                    <img
+                    <Image
                       src={video.thumbnail_url}
                       alt={video.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

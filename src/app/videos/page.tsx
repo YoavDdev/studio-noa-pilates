@@ -1,8 +1,6 @@
 // דף סגנונות פילאטיס - תצוגת תיקיות Vimeo
-import { createClient } from '@/lib/supabase/server'
 import { getCurrentUserProfile } from '@/lib/auth-helpers'
 import Link from 'next/link'
-import Image from 'next/image'
 import { PlayIcon, SparklesIcon, StarIcon } from '@heroicons/react/24/outline'
 
 export default async function VideosPage() {

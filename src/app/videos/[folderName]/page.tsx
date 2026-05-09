@@ -9,11 +9,12 @@ interface Props {
 }
 
 export default async function FolderPage({ params }: Props) {
-  const profile = await getCurrentUserProfile()
+  await getCurrentUserProfile()
   const { folderName } = await params
   const decodedFolderName = decodeURIComponent(folderName)
 
   // Fetch folder contents - use absolute URL with current origin
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let folderData: any = null
   try {
     // Build the API URL - need full URL for server-side fetch
@@ -82,6 +83,7 @@ export default async function FolderPage({ params }: Props) {
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-black mb-6">תת-תיקיות</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {subfolders.map((subfolder: any) => (
                 <Link
                   key={subfolder.uri}
@@ -119,6 +121,7 @@ export default async function FolderPage({ params }: Props) {
           <div>
             <h2 className="text-3xl font-bold text-black mb-6">שיעורים</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {videos.map((video: any) => {
                 // Extract Vimeo ID from URI
                 const vimeoId = video.uri.split('/').pop()

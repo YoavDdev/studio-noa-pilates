@@ -162,10 +162,10 @@ export default function Home() {
       <section className="py-28 md:py-40 bg-[#0F0A05] reveal-on-scroll">
         <div className="max-w-3xl mx-auto px-6 md:px-12 text-center">
           <p className="font-heading text-[clamp(1.75rem,4vw,3rem)] font-light text-[#EFE3CC] leading-[1.7] fade-in-up">
-            "מזמינה אתכם להתאהב בעצמכם מחדש —<br />
+            &ldquo;מזמינה אתכם להתאהב בעצמכם מחדש —<br />
             מרחב בטוח להיות בנוכחות,<br />
             ולגלות תוך המסע המטורף<br />
-            התעוררות חדשה."
+            התעוררות חדשה.&rdquo;
           </p>
           <div className="mt-10 w-8 h-px bg-[#B8935A] mx-auto fade-in-up" style={{ animationDelay: '0.2s' }} />
         </div>
