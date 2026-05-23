@@ -37,30 +37,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const fetchProfile = async (userId: string) => {
       try {
         console.log('Fetching profile for user:', userId)
-        const { data, error } = await supabase
+        
+        // Race between fetch and timeout
+        const timeout = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
+        )
+        
+        const query = supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle()
 
-        console.log('Profile fetch result:', { data, error })
+        const result = await Promise.race([query, timeout]) as { data: Profile | null, error: unknown }
+        
+        console.log('Profile fetch result:', result)
 
-        if (error) {
-          console.error('Profile fetch error:', error)
+        if (result.error) {
+          console.error('Profile fetch error:', result.error)
           setProfile(null)
-          setLoading(false)
           return
         }
 
-        if (data) {
-          console.log('Profile loaded successfully:', data)
-          setProfile(data as Profile)
+        if (result.data) {
+          console.log('Profile loaded successfully:', result.data)
+          setProfile(result.data)
         } else {
           console.log('No profile found for user')
           setProfile(null)
         }
       } catch (error) {
-        console.error('Error fetching profile:', error)
+        console.error('Error fetching profile (timeout?):', error)
         setProfile(null)
       } finally {
         setLoading(false)
