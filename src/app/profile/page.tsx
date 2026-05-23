@@ -12,6 +12,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [fullName, setFullName] = useState('')
   const [saving, setSaving] = useState(false)
+  const [profileTimeout, setProfileTimeout] = useState(false)
 
   useEffect(() => {
     console.log('Profile page - loading:', loading, 'user:', !!user, 'profile:', !!profile)
@@ -28,6 +29,14 @@ export default function ProfilePage() {
       setFullName(profile.full_name)
     }
   }, [profile])
+
+  // Timeout: stop showing spinner after 3 seconds even if profile hasn't loaded
+  useEffect(() => {
+    if (user && !profile) {
+      const timer = setTimeout(() => setProfileTimeout(true), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [user, profile])
 
   const handleSave = async () => {
     if (!fullName.trim()) {
@@ -80,13 +89,31 @@ export default function ProfilePage() {
     return null
   }
 
-  // If we have user but no profile yet, show loading
+  // If we have user but no profile yet
   if (!profile) {
+    if (!profileTimeout) {
+      return (
+        <div className="min-h-screen bg-[#FDFCFA] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C9A871] mx-auto"></div>
+            <p className="mt-4 text-[#A39888]">טוען פרופיל...</p>
+          </div>
+        </div>
+      )
+    }
+    // Timeout reached - show basic profile with user info
     return (
-      <div className="min-h-screen bg-[#FDFCFA] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C9A871] mx-auto"></div>
-          <p className="mt-4 text-[#A39888]">טוען פרופיל...</p>
+      <div className="min-h-screen bg-[#FDFCFA] py-12 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <h1 className="text-4xl font-bold text-[#2A2520] mb-2">הפרופיל שלי</h1>
+          <div className="bg-white border border-[#EBE5DC] p-8 mt-6">
+            <p className="text-[#5C4D3C] mb-2">אימייל: {user.email}</p>
+            <p className="text-[#5C4D3C] mb-4">שם: {user.user_metadata?.full_name || user.user_metadata?.name || 'לא הוגדר'}</p>
+            <p className="text-sm text-[#A39888]">הפרופיל שלך עדיין בטעינה. נסה לרענן את הדף.</p>
+            <button onClick={() => window.location.reload()} className="mt-4 px-6 py-2 bg-[#C9A871] text-white hover:bg-[#B8935A] transition-colors">
+              רענן דף
+            </button>
+          </div>
         </div>
       </div>
     )
