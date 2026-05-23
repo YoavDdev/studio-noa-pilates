@@ -45,25 +45,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         console.log('Profile fetch result:', { data, error })
 
-        // If no profile row exists yet, don't treat as a hard error
         if (error) {
-          // PGRST116: No rows returned when expecting one
-          // Some environments return status 406 for maybeSingle no row
-          const code = (error as { code?: string })?.code
-          const status = (error as { status?: number })?.status
-          if (code === 'PGRST116' || status === 406) {
-            console.log('No profile found, setting to null')
-            setProfile(null)
-            return
-          }
-          throw error
+          console.error('Profile fetch error:', error)
+          setProfile(null)
+          setLoading(false)
+          return
         }
 
-        console.log('Profile loaded successfully:', data)
-        setProfile(data as Profile | null)
+        if (data) {
+          console.log('Profile loaded successfully:', data)
+          setProfile(data as Profile)
+        } else {
+          console.log('No profile found for user')
+          setProfile(null)
+        }
       } catch (error) {
         console.error('Error fetching profile:', error)
         setProfile(null)
+      } finally {
+        setLoading(false)
       }
     }
 
