@@ -12,8 +12,10 @@ interface AuthContextType {
   profile: Profile | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signUp: (email: string, password: string, fullName: string) => Promise<void>
   signOut: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<void>
 }
 
@@ -102,6 +104,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
   }
 
+  const signInWithGoogle = async () => {
+    if (!supabase) throw new Error('Supabase not configured')
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      }
+    })
+    if (error) throw error
+  }
+
   const signUp = async (email: string, password: string, fullName: string) => {
     if (!supabase) throw new Error('Supabase not configured')
     const { error } = await supabase.auth.signUp({
@@ -118,6 +131,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Profile will be created automatically by the database trigger
     // No need to manually insert into profiles table
+  }
+
+  const resetPassword = async (email: string) => {
+    if (!supabase) throw new Error('Supabase not configured')
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    if (error) throw error
   }
 
   const signOut = async () => {
@@ -170,8 +191,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       profile: null,
       loading: false,
       signIn,
+      signInWithGoogle,
       signUp,
       signOut,
+      resetPassword,
       updateProfile,
     }
     return <AuthContext.Provider value={mockValue}>{children}</AuthContext.Provider>
@@ -182,8 +205,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     profile,
     loading,
     signIn,
+    signInWithGoogle,
     signUp,
     signOut,
+    resetPassword,
     updateProfile,
   }
 
