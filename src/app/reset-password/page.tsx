@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClientSupabase } from '@/lib/supabase'
 import { translations } from '@/lib/translations'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { EyeIcon, EyeSlashIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
@@ -15,15 +15,45 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [validating, setValidating] = useState(true)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClientSupabase()
 
   useEffect(() => {
-    if (!supabase) {
-      toast.error('Supabase לא מוגדר')
-      router.push('/login')
+    const handleTokenExchange = async () => {
+      if (!supabase) {
+        toast.error('Supabase לא מוגדר')
+        router.push('/login')
+        return
+      }
+
+      // Check if there's a token hash in the URL (from email link)
+      const tokenHash = searchParams.get('token_hash')
+      const type = searchParams.get('type')
+      
+      if (tokenHash && type === 'recovery') {
+        console.log('מאמת token מהמייל...')
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: 'recovery'
+        })
+        
+        if (error) {
+          console.error('שגיאה באימות token:', error)
+          toast.error('הקישור לא תקף או שפג תוקפו')
+          router.push('/forgot-password')
+          return
+        }
+        
+        console.log('Token מאומת בהצלחה!')
+      }
+      
+      setValidating(false)
     }
-  }, [supabase, router])
+
+    handleTokenExchange()
+  }, [supabase, router, searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,9 +76,13 @@ export default function ResetPasswordPage() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      console.log('מנסה לשנות סיסמה...')
+      
+      const { data, error } = await supabase.auth.updateUser({
         password: password
       })
+
+      console.log('תגובה:', { data, error })
 
       if (error) throw error
 
@@ -59,14 +93,22 @@ export default function ResetPasswordPage() {
         router.push('/login')
       }, 2000)
     } catch (error: unknown) {
+      console.error('שגיאה בשינוי סיסמה:', error)
       toast.error((error as Error).message || 'שגיאה בשינוי הסיסמה')
     } finally {
       setLoading(false)
     }
   }
 
-  if (!supabase) {
-    return null
+  if (!supabase || validating) {
+    return (
+      <div className="min-h-screen bg-[var(--color-cream)] flex items-center justify-center section-padding">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-sage)] mx-auto"></div>
+          <p className="mt-4 text-[var(--color-soft-charcoal)]">מאמת קישור...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

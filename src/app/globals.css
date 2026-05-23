@@ -10,20 +10,20 @@
    CSS VARIABLES
    ═══════════════════════════════════════ */
 :root {
-  /* Colors - Classical & Warm */
-  --color-primary: #B8935A;
-  --color-primary-light: #EFE3CC;
+  /* Colors - Natural Light & Warmth (inspired by studio photography) */
+  --color-primary: #C9A871;        /* Warm wood tone from the stick */
+  --color-primary-light: #F5EFE6;  /* Soft cream from natural light */
   --color-primary-dark: #8B6B38;
   
-  --color-background: #FAF8F3;
+  --color-background: #FDFCFA;     /* Bright natural light */
   --color-surface: #FFFFFF;
-  --color-border: #E8E2D9;
+  --color-border: #EBE5DC;         /* Soft shadow tones */
   
-  --color-text-primary: #1A130A;
+  --color-text-primary: #2A2520;   /* Warm charcoal */
   --color-text-secondary: #5C4D3C;
-  --color-text-muted: #9C8E7E;
+  --color-text-muted: #A39888;     /* Warm grey from shadows */
   
-  --color-black: #0F0A05;
+  --color-black: #1A1410;          /* Warm black from clothing */
   
   --color-sage: #5A7A5C;
   --color-sage-light: #A8C4AA;

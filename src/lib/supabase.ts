@@ -38,9 +38,15 @@ export interface Database {
           email: string
           full_name: string | null
           avatar_url: string | null
-          subscription_type: 'free' | 'premium' | 'package' | null
-          subscription_expires_at: string | null
-          lessons_remaining: number | null
+          subscription_id: string | null
+          user_type: string | null
+          is_admin: boolean | null
+          trial_start_date: string | null
+          subscription_start_date: string | null
+          cancellation_date: string | null
+          paypal_status: string | null
+          paypal_id: string | null
+          has_seen_welcome_message: boolean | null
           created_at: string
           updated_at: string
         }
@@ -49,9 +55,15 @@ export interface Database {
           email: string
           full_name?: string | null
           avatar_url?: string | null
-          subscription_type?: 'free' | 'premium' | 'package' | null
-          subscription_expires_at?: string | null
-          lessons_remaining?: number | null
+          subscription_id?: string | null
+          user_type?: string | null
+          is_admin?: boolean | null
+          trial_start_date?: string | null
+          subscription_start_date?: string | null
+          cancellation_date?: string | null
+          paypal_status?: string | null
+          paypal_id?: string | null
+          has_seen_welcome_message?: boolean | null
           created_at?: string
           updated_at?: string
         }
@@ -60,9 +72,15 @@ export interface Database {
           email?: string
           full_name?: string | null
           avatar_url?: string | null
-          subscription_type?: 'free' | 'premium' | 'package' | null
-          subscription_expires_at?: string | null
-          lessons_remaining?: number | null
+          subscription_id?: string | null
+          user_type?: string | null
+          is_admin?: boolean | null
+          trial_start_date?: string | null
+          subscription_start_date?: string | null
+          cancellation_date?: string | null
+          paypal_status?: string | null
+          paypal_id?: string | null
+          has_seen_welcome_message?: boolean | null
           created_at?: string
           updated_at?: string
         }

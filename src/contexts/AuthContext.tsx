@@ -36,11 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const fetchProfile = async (userId: string) => {
       try {
+        console.log('Fetching profile for user:', userId)
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle()
+
+        console.log('Profile fetch result:', { data, error })
 
         // If no profile row exists yet, don't treat as a hard error
         if (error) {
@@ -49,15 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const code = (error as { code?: string })?.code
           const status = (error as { status?: number })?.status
           if (code === 'PGRST116' || status === 406) {
+            console.log('No profile found, setting to null')
             setProfile(null)
             return
           }
           throw error
         }
 
+        console.log('Profile loaded successfully:', data)
         setProfile(data as Profile | null)
       } catch (error) {
         console.error('Error fetching profile:', error)
+        setProfile(null)
       }
     }
 
@@ -151,22 +157,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     console.log('Signing out...')
     
-    // Clear local state immediately for better UX
-    setUser(null)
-    setProfile(null)
-    
-    // Try to sign out from Supabase with timeout
     try {
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 3000)
-      )
+      // Sign out from Supabase (this clears the session and cookies)
+      const { error } = await supabase.auth.signOut()
       
-      const signOutPromise = supabase.auth.signOut()
+      if (error) {
+        console.error('Error signing out:', error)
+        throw error
+      }
       
-      await Promise.race([signOutPromise, timeoutPromise])
       console.log('Successfully signed out from Supabase')
     } catch (error) {
-      console.log('Sign out completed with timeout or error, but local state already cleared:', error)
+      console.error('Sign out error:', error)
+      throw error
+    } finally {
+      // Clear local state
+      setUser(null)
+      setProfile(null)
       // Don't throw - we already cleared local state
     }
   }
