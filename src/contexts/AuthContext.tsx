@@ -34,40 +34,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    const fetchProfile = async (userId: string) => {
+    const fetchProfile = async (userId: string, retryCount = 0) => {
       try {
-        console.log('Fetching profile for user:', userId)
+        console.log('Fetching profile for user:', userId, retryCount > 0 ? `(retry ${retryCount})` : '')
         
-        // Race between fetch and timeout
-        const timeout = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile fetch timeout')), 5000)
-        )
-        
-        const query = supabase
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', userId)
           .maybeSingle()
-
-        const result = await Promise.race([query, timeout]) as { data: Profile | null, error: unknown }
         
-        console.log('Profile fetch result:', result)
+        console.log('Profile fetch result:', { data, error })
 
-        if (result.error) {
-          console.error('Profile fetch error:', result.error)
+        if (error) {
+          console.error('Profile fetch error:', error)
           setProfile(null)
           return
         }
 
-        if (result.data) {
-          console.log('Profile loaded successfully:', result.data)
-          setProfile(result.data)
+        if (data) {
+          console.log('Profile loaded successfully:', data)
+          setProfile(data as Profile)
         } else {
           console.log('No profile found for user')
           setProfile(null)
         }
       } catch (error) {
-        console.error('Error fetching profile (timeout?):', error)
+        console.error('Error fetching profile:', error)
+        // Retry once after 2 seconds
+        if (retryCount < 1) {
+          console.log('Retrying profile fetch in 2 seconds...')
+          setTimeout(() => fetchProfile(userId, retryCount + 1), 2000)
+          return
+        }
         setProfile(null)
       } finally {
         setLoading(false)
