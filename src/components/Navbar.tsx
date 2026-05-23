@@ -38,7 +38,17 @@ export default function Navbar() {
     setIsMenuOpen(false)
     
     toast.loading('מתנתק...', { id: 'signout' })
+    
+    // Sign out on client side
     await signOut()
+    
+    // Also sign out on server side to clear cookies
+    try {
+      await fetch('/api/auth/signout', { method: 'POST' })
+    } catch (e) {
+      console.error('Server signout error:', e)
+    }
+    
     toast.success('התנתקת בהצלחה', { id: 'signout' })
     
     // Force a full page reload to clear all state
