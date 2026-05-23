@@ -39,19 +39,24 @@ export default function Navbar() {
     
     toast.loading('מתנתק...', { id: 'signout' })
     
-    // Sign out on client side
-    await signOut()
+    // Set a timeout - redirect regardless after 2 seconds
+    const timeout = setTimeout(() => {
+      console.log('SignOut timeout - forcing redirect')
+      window.location.href = '/'
+    }, 2000)
     
-    // Also sign out on server side to clear cookies
     try {
-      await fetch('/api/auth/signout', { method: 'POST' })
+      // Try both client and server signout in parallel
+      await Promise.allSettled([
+        signOut(),
+        fetch('/api/auth/signout', { method: 'POST' })
+      ])
     } catch (e) {
-      console.error('Server signout error:', e)
+      console.error('SignOut error:', e)
     }
     
+    clearTimeout(timeout)
     toast.success('התנתקת בהצלחה', { id: 'signout' })
-    
-    // Force a full page reload to clear all state
     window.location.href = '/'
   }
 
