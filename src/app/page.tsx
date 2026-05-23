@@ -65,7 +65,7 @@ export default function Home() {
             <div className="fade-in-up" style={{ animationDelay: '0.35s' }}>
               <p className="font-body text-[#5C4D3C] mb-4">
                 שלום {profile?.full_name?.split(' ')[0]} —
-                {profile?.subscription_type === 'premium' ? ' המנוי שלך פעיל' : ' ברוכה הבאה'}
+                {profile?.subscription_id?.startsWith('I-') || profile?.user_type === 'premium' ? ' המנוי שלך פעיל' : ' ברוכה הבאה'}
               </p>
               <Link href="/videos"
                 className="inline-flex items-center gap-3 bg-[#1A1410] text-[#FDFCFA] font-body text-sm tracking-wider px-8 py-4 hover:bg-[#C9A871] transition-colors duration-300">
