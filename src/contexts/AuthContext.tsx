@@ -74,20 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Get initial session - just set user, don't fetch profile yet
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      if (!session?.user) {
-        setLoading(false)
-      }
-      // Profile will be fetched by onAuthStateChange which fires right after
-    }
+    let initialSessionHandled = false
 
-    getInitialSession()
-
-    // Listen for auth changes - this is where we fetch profile
-    // onAuthStateChange fires when session is fully ready
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async (event: string, session: any) => {
@@ -95,11 +84,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const typedSession = session as { user?: User } | null
         setUser(typedSession?.user ?? null)
         
+        // Skip SIGNED_IN during initialization - wait for INITIAL_SESSION
+        if (event === 'SIGNED_IN' && !initialSessionHandled) {
+          console.log('Skipping SIGNED_IN during init, waiting for INITIAL_SESSION')
+          return
+        }
+        
         if (typedSession?.user) {
           await fetchProfile(typedSession.user.id)
         } else {
           setProfile(null)
           setLoading(false)
+        }
+        
+        if (event === 'INITIAL_SESSION') {
+          initialSessionHandled = true
         }
       }
     )
