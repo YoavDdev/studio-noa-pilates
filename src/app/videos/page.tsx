@@ -9,14 +9,26 @@ export default async function VideosPage() {
   // משיכת תיקיות ישירות מ-Vimeo
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let folders: any[] = []
+  
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/folders`, {
+    // שימוש ב-absolute URL עם הדומיין הנכון
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
+                    (typeof window !== 'undefined' ? window.location.origin : 'https://studio-noa-pilates.vercel.app')
+    const apiUrl = `${baseUrl}/api/folders`
+    
+    console.log('[Videos Page] Fetching folders from:', apiUrl)
+    const response = await fetch(apiUrl, {
       cache: 'no-store'
     })
+    console.log('[Videos Page] Response status:', response.status)
+    
     const data = await response.json()
+    console.log('[Videos Page] Data received:', data)
+    
     folders = data.folders || []
+    console.log('[Videos Page] Folders count:', folders.length)
   } catch (error) {
-    console.error('Error fetching folders:', error)
+    console.error('[Videos Page] Error fetching folders:', error)
   }
 
   const foldersWithCount = folders
