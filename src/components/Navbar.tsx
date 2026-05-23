@@ -37,17 +37,12 @@ export default function Navbar() {
     setIsUserMenuOpen(false)
     setIsMenuOpen(false)
     
-    try {
-      toast.loading('מתנתק...', { id: 'signout' })
-      await signOut()
-      toast.success('התנתקת בהצלחה', { id: 'signout' })
-      
-      // Force a full page reload to clear all state
-      window.location.href = '/'
-    } catch (error) {
-      console.error('Error signing out:', error)
-      toast.error('שגיאה בהתנתקות', { id: 'signout' })
-    }
+    toast.loading('מתנתק...', { id: 'signout' })
+    await signOut()
+    toast.success('התנתקת בהצלחה', { id: 'signout' })
+    
+    // Force a full page reload to clear all state
+    window.location.href = '/'
   }
 
   const navLinks = user

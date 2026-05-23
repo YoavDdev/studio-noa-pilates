@@ -157,24 +157,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     console.log('Signing out...')
     
+    // Clear local state immediately
+    setUser(null)
+    setProfile(null)
+    
     try {
       // Sign out from Supabase (this clears the session and cookies)
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        console.error('Error signing out:', error)
-        throw error
-      }
-      
+      await supabase.auth.signOut({ scope: 'local' })
       console.log('Successfully signed out from Supabase')
     } catch (error) {
-      console.error('Sign out error:', error)
-      throw error
-    } finally {
-      // Clear local state
-      setUser(null)
-      setProfile(null)
-      // Don't throw - we already cleared local state
+      console.error('Sign out error (non-blocking):', error)
+      // Don't throw - local state already cleared
     }
   }
 
