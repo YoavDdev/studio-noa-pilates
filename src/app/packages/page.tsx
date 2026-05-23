@@ -81,15 +81,17 @@ export default function PackagesPage() {
       const updates: Record<string, unknown> = {}
       
       if (packageId === 'premium-monthly') {
-        updates.subscription_type = 'premium'
+        updates.subscription_id = 'Premium-Monthly'
+        updates.user_type = 'premium'
         const expirationDate = new Date()
         expirationDate.setMonth(expirationDate.getMonth() + 1)
-        updates.subscription_expires_at = expirationDate.toISOString()
+        updates.subscription_start_date = new Date().toISOString()
       } else if (packageId === 'premium-yearly') {
-        updates.subscription_type = 'premium'
+        updates.subscription_id = 'Premium-Yearly'
+        updates.user_type = 'premium'
         const expirationDate = new Date()
         expirationDate.setFullYear(expirationDate.getFullYear() + 1)
-        updates.subscription_expires_at = expirationDate.toISOString()
+        updates.subscription_start_date = new Date().toISOString()
       }
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -109,7 +111,8 @@ export default function PackagesPage() {
     setLoading(true)
     try {
       const updates = {
-        subscription_type: 'free'
+        subscription_id: 'Free',
+        user_type: 'free'
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateProfile(updates as any)
@@ -191,12 +194,12 @@ export default function PackagesPage() {
               </h3>
               <div className="flex items-center justify-between">
                 <div>
-                  {profile.subscription_type === 'premium' ? (
+                  {profile.subscription_id?.startsWith('I-') || profile.user_type === 'premium' ? (
                     <div>
                       <p className="font-medium text-[var(--color-sage)]">מנוי פרימיום פעיל</p>
-                      {profile.subscription_expires_at && (
+                      {profile.subscription_start_date && (
                         <p className="text-sm text-[var(--color-text-muted)]">
-                          תוקף עד: {new Date(profile.subscription_expires_at).toLocaleDateString('he-IL')}
+                          החל מ: {new Date(profile.subscription_start_date).toLocaleDateString('he-IL')}
                         </p>
                       )}
                     </div>
@@ -277,14 +280,14 @@ export default function PackagesPage() {
                   {pkg.isFree ? (
                     <button
                       onClick={handleFreeAccess}
-                      disabled={loading || profile?.subscription_type === 'free'}
+                      disabled={loading || profile?.subscription_id === 'Free' || profile?.user_type === 'free'}
                       className={`font-body w-full py-4 border transition-colors ${
                         pkg.popular 
                           ? 'border-white text-white hover:bg-white hover:text-[var(--color-black)]' 
                           : 'border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary-light)]'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {profile?.subscription_type === 'free' ? 'המנוי הנוכחי שלך' : 'התחילי חינם'}
+                      {profile?.subscription_id === 'Free' || profile?.user_type === 'free' ? 'המנוי הנוכחי שלך' : 'התחילי חינם'}
                     </button>
                   ) : selectedPackage === pkg.id ? (
                     <div className="space-y-4">
