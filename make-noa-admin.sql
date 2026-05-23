@@ -7,7 +7,7 @@ SET
   subscription_id = 'Admin',
   user_type = 'admin',
   updated_at = NOW()
-WHERE email = 'guralnikn@gmail.com';
+WHERE email = 'studionoapilates.israel@gmail.com';
 
 -- בדיקה שהעדכון עבד
 SELECT 
@@ -18,5 +18,5 @@ SELECT
   user_type,
   created_at
 FROM profiles
-WHERE email IN ('guralnikn@gmail.com', 'yoavddev@gmail.com')
+WHERE email IN ('studionoapilates.israel@gmail.com', 'yoavddev@gmail.com')
 ORDER BY email;

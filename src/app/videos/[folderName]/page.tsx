@@ -19,7 +19,7 @@ export default async function FolderPage({ params }: Props) {
   try {
     // Build the API URL - need full URL for server-side fetch
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 
-      (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
+      (typeof window !== 'undefined' ? window.location.origin : 'https://studio-noa-pilates.vercel.app')
     
     const apiUrl = `${baseUrl}/api/folders/${folderName}`
     console.log('🔍 Fetching folder data from:', apiUrl)
