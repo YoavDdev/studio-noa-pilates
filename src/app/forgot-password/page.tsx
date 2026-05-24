@@ -29,8 +29,8 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-cream)] flex items-center justify-center section-padding">
-      <div className="card max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-[var(--color-cream)] flex items-center justify-center section-padding px-4 sm:px-6">
+      <div className="card max-w-md w-full space-y-8 bg-white p-6 sm:p-8 border border-[var(--color-border,#EBE5DC)]">
         <div>
           <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center bg-gradient-to-br from-[var(--color-sage)] to-[var(--color-deep-sage)]">
             <span className="text-white font-semibold text-xl">נ</span>

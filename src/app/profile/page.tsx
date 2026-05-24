@@ -120,19 +120,19 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFCFA] py-12 px-4">
+    <div className="min-h-screen bg-[#FDFCFA] py-8 sm:py-12 px-4 sm:px-6">
       <div className="container mx-auto max-w-4xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[#2A2520] mb-2">הפרופיל שלי</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-[#2A2520] mb-2">הפרופיל שלי</h1>
           <p className="text-[#A39888]">נהל את הפרטים האישיים והמנוי שלך</p>
         </div>
 
         <div className="grid gap-6">
           {/* Personal Info Card */}
-          <div className="bg-white border border-[#EBE5DC] p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-[#2A2520] flex items-center gap-2">
+          <div className="bg-white border border-[#EBE5DC] p-5 sm:p-8">
+            <div className="flex items-center justify-between mb-5 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-[#2A2520] flex items-center gap-2">
                 <UserCircleIcon className="w-6 h-6 text-[#C9A871]" />
                 פרטים אישיים
               </h2>
@@ -200,8 +200,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Subscription Status Card */}
-          <div className="bg-white border border-[#EBE5DC] p-8">
-            <h2 className="text-2xl font-semibold text-[#2A2520] flex items-center gap-2 mb-6">
+          <div className="bg-white border border-[#EBE5DC] p-5 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#2A2520] flex items-center gap-2 mb-5 sm:mb-6">
               <SparklesIcon className="w-6 h-6 text-[#C9A871]" />
               סטטוס מנוי
             </h2>
@@ -272,8 +272,8 @@ export default function ProfilePage() {
           </div>
 
           {/* Account Actions Card */}
-          <div className="bg-white border border-[#EBE5DC] p-8">
-            <h2 className="text-2xl font-semibold text-[#2A2520] mb-6">
+          <div className="bg-white border border-[#EBE5DC] p-5 sm:p-8">
+            <h2 className="text-xl sm:text-2xl font-semibold text-[#2A2520] mb-5 sm:mb-6">
               פעולות חשבון
             </h2>
 

@@ -136,17 +136,17 @@ export default function PackagesPage() {
     return (
       <div className="min-h-screen bg-[var(--color-background)] py-16 md:py-24">
         <div className="container max-w-4xl mx-auto px-6 text-center">
-          <h1 className="font-heading text-5xl md:text-6xl font-light mb-6">
+          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl font-light mb-6">
             חבילות ומנויים
           </h1>
-          <div className="bg-white border border-[var(--color-border)] p-12 mt-12">
+          <div className="bg-white border border-[var(--color-border)] p-6 sm:p-12 mt-8 sm:mt-12">
             <h2 className="font-heading text-2xl font-light mb-4">
               נדרשת התחברות
             </h2>
             <p className="font-body text-[var(--color-text-secondary)] mb-8">
               כדי לרכוש חבילות ומנויים, עליך להתחבר תחילה
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Link
                 href="/login"
                 className="font-body px-8 py-3 bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] transition-colors"
@@ -171,14 +171,14 @@ export default function PackagesPage() {
         <div className="container max-w-7xl mx-auto px-6">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="font-heading text-5xl md:text-7xl font-light mb-6">
+            <h1 className="font-heading text-3xl sm:text-5xl md:text-7xl font-light mb-4 sm:mb-6">
               חבילות ומנויים
             </h1>
-            <p className="font-body text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto">
+            <p className="font-body text-base sm:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto px-2">
               בחרי את החבילה המתאימה לך והתחילי את המסע שלך עם נועה
             </p>
             {!isPayPalConfigured && (
-              <div className="mt-8 max-w-2xl mx-auto bg-[#EFE3CC] border border-[var(--color-primary)] p-6">
+              <div className="mt-6 sm:mt-8 max-w-2xl mx-auto bg-[#EFE3CC] border border-[var(--color-primary)] p-4 sm:p-6">
                 <p className="font-body text-sm text-[var(--color-text-primary)]">
                   💳 <strong>שימי לב:</strong> מערכת התשלומים האוטומטית עדיין בהקמה. לרכישת מנוי, צרי קשר ישירות.
                 </p>
@@ -188,11 +188,11 @@ export default function PackagesPage() {
 
           {/* Current Subscription Status */}
           {profile && (
-            <div className="bg-white border border-[var(--color-border)] p-8 mb-12 max-w-3xl mx-auto">
-              <h3 className="font-heading text-lg font-medium mb-4 text-[var(--color-text-primary)]">
+            <div className="bg-white border border-[var(--color-border)] p-5 sm:p-8 mb-8 sm:mb-12 max-w-3xl mx-auto">
+              <h3 className="font-heading text-base sm:text-lg font-medium mb-3 sm:mb-4 text-[var(--color-text-primary)]">
                 המנוי הנוכחי שלך
               </h3>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   {profile.subscription_id?.startsWith('I-') || profile.user_type === 'premium' ? (
                     <div>
@@ -212,16 +212,16 @@ export default function PackagesPage() {
           )}
 
           {/* Packages Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-20 max-w-6xl mx-auto border border-[var(--color-border)]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-12 sm:mb-20 max-w-6xl mx-auto border border-[var(--color-border)]">
             {packages.map((pkg, index) => {
               const Icon = pkg.icon
               return (
                 <div
                   key={pkg.id}
-                  className={`relative p-10 ${
+                  className={`relative p-6 sm:p-10 ${
                     pkg.popular ? 'bg-[#0F0A05] text-white md:-mt-8 md:mb-0 md:py-16 z-10' : 'bg-white'
                   } ${
-                    index < packages.length - 1 ? 'md:border-l border-[var(--color-border)]' : ''
+                    index < packages.length - 1 ? 'md:border-l border-b md:border-b-0 border-[var(--color-border)]' : ''
                   }`}
                 >
                   {pkg.badge && (
@@ -351,13 +351,13 @@ export default function PackagesPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="bg-white border border-[var(--color-border)] p-12 max-w-4xl mx-auto">
-            <h3 className="font-heading text-3xl font-light mb-12 text-center text-[var(--color-text-primary)]">
+          <div className="bg-white border border-[var(--color-border)] p-6 sm:p-12 max-w-4xl mx-auto">
+            <h3 className="font-heading text-2xl sm:text-3xl font-light mb-8 sm:mb-12 text-center text-[var(--color-text-primary)]">
               שאלות נפוצות
             </h3>
             
-            <div className="space-y-8">
-              <div className="pb-6 border-b border-[var(--color-border)]">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="pb-4 sm:pb-6 border-b border-[var(--color-border)]">
                 <h4 className="font-heading text-lg font-medium mb-3 text-[var(--color-text-primary)]">
                   מה ההבדל בין המנוי החודשי לשנתי?
                 </h4>
@@ -396,11 +396,11 @@ export default function PackagesPage() {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center mt-20 pb-12">
-            <h3 className="font-heading text-3xl font-light mb-4 text-[var(--color-text-primary)]">
+          <div className="text-center mt-12 sm:mt-20 pb-8 sm:pb-12">
+            <h3 className="font-heading text-2xl sm:text-3xl font-light mb-4 text-[var(--color-text-primary)]">
               מוכנה להתחיל?
             </h3>
-            <p className="font-body text-lg mb-8 max-w-2xl mx-auto text-[var(--color-text-secondary)]">
+            <p className="font-body text-base sm:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto text-[var(--color-text-secondary)] px-2">
               הצטרפי אלינו והתחילי את המסע שלך לגוף חזק ובריא
             </p>
             <Link

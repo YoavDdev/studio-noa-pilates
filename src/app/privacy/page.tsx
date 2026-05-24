@@ -2,11 +2,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-[var(--color-background)] py-16 md:py-24">
       <div className="container max-w-4xl mx-auto px-6">
-        <h1 className="font-heading text-4xl md:text-6xl font-light mb-8 text-[var(--color-text-primary)]">
+        <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl font-light mb-6 sm:mb-8 text-[var(--color-text-primary)]">
           מדיניות פרטיות
         </h1>
         
-        <div className="bg-white p-8 md:p-12 space-y-8">
+        <div className="bg-white p-5 sm:p-8 md:p-12 space-y-6 sm:space-y-8">
           <section>
             <h2 className="font-heading text-2xl font-light mb-4 text-[var(--color-text-primary)]">
               1. כללי

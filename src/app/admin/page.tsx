@@ -11,11 +11,11 @@ export default async function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8" dir="rtl">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2">
             👑 לוח בקרה - מנהל
           </h1>
           <p className="text-gray-600">
@@ -24,7 +24,7 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Admin Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* ניהול משתמשים */}
           <Link href="/admin/users">
             <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer border-2 border-transparent hover:border-purple-300">
@@ -153,9 +153,9 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Quick Stats */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">סטטיסטיקות מהירות</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="mt-8 sm:mt-12 bg-white rounded-xl shadow-lg p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">סטטיסטיקות מהירות</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">-</div>
               <div className="text-gray-600 text-sm mt-2">סה&quot;כ משתמשים</div>

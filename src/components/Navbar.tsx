@@ -18,6 +18,21 @@ export default function Navbar() {
 
   useEffect(() => { setMounted(true) }, [])
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isMenuOpen])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [pathname])
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
@@ -165,12 +180,13 @@ export default function Navbar() {
             {/* Mobile burger */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex flex-col gap-1.5 p-2 text-[#1A1410]"
+              className="md:hidden flex flex-col gap-[5px] p-2.5 -mr-2.5 text-[#1A1410] touch-manipulation"
               aria-label="תפריט"
+              aria-expanded={isMenuOpen}
             >
-              <span className={`block w-6 h-px bg-current transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2.5' : ''}`} />
-              <span className={`block w-6 h-px bg-current transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
-              <span className={`block w-6 h-px bg-current transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2.5' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-current transition-all duration-300 origin-center ${isMenuOpen ? 'rotate-45 translate-y-[6.5px]' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-current transition-all duration-300 ${isMenuOpen ? 'opacity-0 scale-x-0' : ''}`} />
+              <span className={`block w-6 h-[1.5px] bg-current transition-all duration-300 origin-center ${isMenuOpen ? '-rotate-45 -translate-y-[6.5px]' : ''}`} />
             </button>
 
           </div>
@@ -178,12 +194,14 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-[#FDFCFA] border-t border-[#EBE5DC] px-6 py-8">
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+        isMenuOpen ? 'max-h-[80vh] opacity-100' : 'max-h-0 opacity-0'
+      }`}>
+        <div className="bg-[#FDFCFA] border-t border-[#EBE5DC] px-6 py-8">
           <div className="space-y-1 mb-8">
             {navLinks.map(({ href, label }) => (
               <Link key={href} href={href}
-                className={`block py-3 font-body text-base border-b border-[#EBE5DC] transition-colors ${
+                className={`block py-4 font-body text-base border-b border-[#EBE5DC] transition-colors touch-manipulation ${
                   mounted && pathname === href ? 'text-[#C9A871]' : 'text-[#5C4D3C]'
                 }`}
                 onClick={() => setIsMenuOpen(false)}>
@@ -195,25 +213,25 @@ export default function Navbar() {
           {user ? (
             <div className="space-y-1">
               <p className="font-body text-xs text-[#A39888] mb-4">{user.email}</p>
-              <Link href="/profile" className="block py-3 font-body text-sm text-[#5C4D3C] border-b border-[#EBE5DC]" onClick={() => setIsMenuOpen(false)}>הפרופיל שלי</Link>
+              <Link href="/profile" className="block py-4 font-body text-sm text-[#5C4D3C] border-b border-[#EBE5DC] touch-manipulation" onClick={() => setIsMenuOpen(false)}>הפרופיל שלי</Link>
               {(profile as { is_admin?: boolean } | null)?.is_admin && (
-                <Link href="/admin" className="block py-3 font-body text-sm text-[#5C4D3C] border-b border-[#EBE5DC]" onClick={() => setIsMenuOpen(false)}>ניהול מערכת</Link>
+                <Link href="/admin" className="block py-4 font-body text-sm text-[#5C4D3C] border-b border-[#EBE5DC] touch-manipulation" onClick={() => setIsMenuOpen(false)}>ניהול מערכת</Link>
               )}
               <button 
                 type="button"
                 onClick={handleSignOut} 
-                className="block py-3 font-body text-sm text-[#B86B5A] w-full text-right">
+                className="block py-4 font-body text-sm text-[#B86B5A] w-full text-right touch-manipulation">
                 התנתקות
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              <Link href="/login" className="block text-center py-3 font-body text-sm text-[#5C4D3C] border border-[#EBE5DC]" onClick={() => setIsMenuOpen(false)}>כניסה</Link>
-              <Link href="/register" className="block text-center py-3 font-body text-sm bg-[#1A1410] text-[#FDFCFA] tracking-wider" onClick={() => setIsMenuOpen(false)}>התחילי מסע</Link>
+            <div className="space-y-4 pt-2">
+              <Link href="/login" className="block text-center py-3.5 font-body text-sm text-[#5C4D3C] border border-[#EBE5DC] touch-manipulation" onClick={() => setIsMenuOpen(false)}>כניסה</Link>
+              <Link href="/register" className="block text-center py-3.5 font-body text-sm bg-[#1A1410] text-[#FDFCFA] tracking-wider touch-manipulation" onClick={() => setIsMenuOpen(false)}>התחילי מסע</Link>
             </div>
           )}
         </div>
-      )}
+      </div>
     </nav>
   )
 }

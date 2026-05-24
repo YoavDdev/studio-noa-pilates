@@ -40,13 +40,13 @@ export default async function FolderPage({ params }: Props) {
   const { folder, subfolders = [], videos = [] } = folderData
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-8 sm:py-16 px-4 sm:px-6">
       <div className="container mx-auto max-w-7xl">
         {/* Breadcrumb */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <Link 
             href="/videos"
-            className="inline-flex items-center gap-2 text-black/60 hover:text-black transition-colors"
+            className="inline-flex items-center gap-2 text-sm sm:text-base text-black/60 hover:text-black transition-colors"
           >
             <ArrowRightIcon className="w-5 h-5" />
             <span>חזרה לכל הסגנונות</span>
@@ -55,16 +55,16 @@ export default async function FolderPage({ params }: Props) {
 
         {/* Folder Header */}
         <div 
-          className="rounded-3xl p-8 mb-12 shadow-strong"
+          className="rounded-2xl sm:rounded-3xl p-5 sm:p-8 mb-8 sm:mb-12 shadow-strong"
           style={{ backgroundColor: folder.metadata.colorTheme || '#FFE6D6' }}
         >
-          <h1 className="text-5xl font-bold text-black mb-4">
+          <h1 className="text-3xl sm:text-5xl font-bold text-black mb-3 sm:mb-4">
             {decodedFolderName}
           </h1>
-          <p className="text-xl text-black/70 mb-6">
+          <p className="text-base sm:text-xl text-black/70 mb-4 sm:mb-6">
             {folder.metadata.description}
           </p>
-          <div className="flex items-center gap-6 text-black/60">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm sm:text-base text-black/60">
             <div className="flex items-center gap-2">
               <PlayIcon className="w-5 h-5" />
               <span>{videos.length} סרטונים</span>
@@ -81,8 +81,8 @@ export default async function FolderPage({ params }: Props) {
         {/* Subfolders */}
         {subfolders.length > 0 && (
           <div className="mb-12">
-            <h2 className="text-3xl font-bold text-black mb-6">תת-תיקיות</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4 sm:mb-6">תת-תיקיות</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {subfolders.map((subfolder: any) => (
                 <Link
@@ -119,8 +119,8 @@ export default async function FolderPage({ params }: Props) {
         {/* Videos */}
         {videos.length > 0 && (
           <div>
-            <h2 className="text-3xl font-bold text-black mb-6">שיעורים</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4 sm:mb-6">שיעורים</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {videos.map((video: any) => {
                 // Extract Vimeo ID from URI

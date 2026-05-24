@@ -34,14 +34,14 @@ export default async function VideosPage() {
   const foldersWithCount = folders
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-10 sm:py-16 px-4 sm:px-6">
       <div className="container mx-auto max-w-7xl">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">
+        <div className="text-center mb-10 sm:mb-16">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold text-black mb-4 sm:mb-6">
             סגנונות הפילאטיס שלי
           </h1>
-          <p className="text-xl text-text-secondary max-w-2xl mx-auto mb-8">
+          <p className="text-base sm:text-xl text-text-secondary max-w-2xl mx-auto mb-6 sm:mb-8 px-2">
             כל סגנון הוא מסע ייחודי - בחרי את הסגנון שמדבר אלייך היום
           </p>
           {!profile && (
@@ -57,7 +57,7 @@ export default async function VideosPage() {
 
         {/* Styles Grid */}
         {foldersWithCount && foldersWithCount.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
             {foldersWithCount.map((folder, index) => (
               <Link
                 key={folder.uri}

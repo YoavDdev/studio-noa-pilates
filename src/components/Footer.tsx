@@ -6,11 +6,11 @@ export default function Footer() {
       <div className="max-w-8xl mx-auto px-6 md:px-10">
 
         {/* Main footer content */}
-        <div className="py-16 md:py-20 grid md:grid-cols-3 gap-12 md:gap-8 border-b border-white/10">
+        <div className="py-10 sm:py-16 md:py-20 grid md:grid-cols-3 gap-8 md:gap-8 border-b border-white/10">
 
           {/* Brand */}
           <div>
-            <p className="font-heading text-3xl font-light text-[#F5EFE6] mb-4 leading-tight">
+            <p className="font-heading text-2xl sm:text-3xl font-light text-[#F5EFE6] mb-4 leading-tight">
               נועה<br />גורלניק
             </p>
             <p className="font-heading text-sm font-light italic text-[#A39888] leading-relaxed">

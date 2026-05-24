@@ -53,10 +53,10 @@ export default async function VideoPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary-light/20 to-background py-6 sm:py-8 px-4 sm:px-6">
       <div className="container mx-auto max-w-5xl">
         {/* Breadcrumb */}
-        <div className="mb-6 flex items-center gap-3 text-sm">
+        <div className="mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3 text-xs sm:text-sm overflow-x-auto whitespace-nowrap pb-1">
           <Link 
             href="/videos"
             className="text-black/60 hover:text-black transition-colors"
@@ -75,7 +75,7 @@ export default async function VideoPage({ params }: Props) {
         </div>
 
         {/* Video Player */}
-        <div className="bg-white rounded-3xl shadow-strong overflow-hidden mb-8">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-strong overflow-hidden mb-6 sm:mb-8">
           <div className="aspect-video bg-black">
             <iframe
               src={`https://player.vimeo.com/video/${videoId}?badge=0&autopause=0&player_id=0&app_id=${process.env.NEXT_PUBLIC_VIMEO_APP_ID}`}
@@ -87,8 +87,8 @@ export default async function VideoPage({ params }: Props) {
           </div>
 
           {/* Video Info */}
-          <div className="p-8">
-            <h1 className="text-3xl font-bold text-black mb-4">
+          <div className="p-5 sm:p-8">
+            <h1 className="text-xl sm:text-3xl font-bold text-black mb-3 sm:mb-4">
               {videoData.name}
             </h1>
             
@@ -98,7 +98,7 @@ export default async function VideoPage({ params }: Props) {
               </div>
             )}
 
-            <div className="flex items-center gap-6 text-sm text-black/50 border-t border-black/10 pt-6">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-black/50 border-t border-black/10 pt-4 sm:pt-6">
               {videoData.duration && (
                 <div>
                   <span className="font-semibold">משך: </span>
@@ -118,7 +118,7 @@ export default async function VideoPage({ params }: Props) {
         {/* Back Button */}
         <Link
           href={`/videos/${encodeURIComponent(decodedFolderName)}`}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-light text-black font-semibold rounded-full transition-colors shadow-medium hover:shadow-strong"
+          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary-light text-black font-semibold rounded-full transition-colors shadow-medium hover:shadow-strong"
         >
           <ArrowRightIcon className="w-5 h-5" />
           <span>חזרה לתיקייה</span>
