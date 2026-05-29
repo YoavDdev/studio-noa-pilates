@@ -76,8 +76,8 @@ export default function Navbar() {
   }
 
   const navLinks = user
-    ? [{ href: '/videos', label: 'שיעורים' }, { href: '/packages', label: 'חבילות' }]
-    : [{ href: '/', label: 'בית' }, { href: '/videos', label: 'שיעורים' }, { href: '/packages', label: 'חבילות' }]
+    ? [{ href: '/videos', label: 'שיעורים' }, { href: '/videos/explore', label: 'חיפוש חופשי' }, { href: '/packages', label: 'חבילות' }]
+    : [{ href: '/', label: 'בית' }, { href: '/videos', label: 'שיעורים' }, { href: '/videos/explore', label: 'חיפוש חופשי' }, { href: '/packages', label: 'חבילות' }]
 
   return (
     <nav className={`sticky top-0 z-50 transition-all duration-500 ${
@@ -101,7 +101,7 @@ export default function Navbar() {
           {/* Nav — absolutely centered regardless of logo/actions width */}
           <div className="hidden md:flex items-center gap-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             {navLinks.map(({ href, label }) => {
-              const active = mounted && pathname === href
+              const active = mounted && (pathname === href || (href === '/videos' && pathname.startsWith('/videos') && pathname !== '/videos/explore'))
               return (
                 <Link key={href} href={href}
                   className={`font-body text-sm tracking-wider transition-colors duration-200 relative group ${

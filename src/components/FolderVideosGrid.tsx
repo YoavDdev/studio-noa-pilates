@@ -28,8 +28,11 @@ interface Props {
   subfolders: Subfolder[]
 }
 
+const PAGE_SIZE = 24
+
 export default function FolderVideosGrid({ folderName, allVideos, subfolders }: Props) {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const hasSubfolders = subfolders.length > 0
 
@@ -43,6 +46,7 @@ export default function FolderVideosGrid({ folderName, allVideos, subfolders }: 
 
   const handleFilterClick = (category: string | null) => {
     setActiveFilter(prev => prev === category ? null : category)
+    setVisibleCount(PAGE_SIZE)
   }
 
   return (
@@ -123,11 +127,12 @@ export default function FolderVideosGrid({ folderName, allVideos, subfolders }: 
           )}
 
           {filteredVideos.length > 0 ? (
+            <>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {(activeFilter === '__direct__' 
                 ? allVideos.filter(v => v.category === null)
                 : filteredVideos
-              ).map((video, index) => {
+              ).slice(0, visibleCount).map((video, index) => {
                 const vimeoId = video.uri.split('/').pop()
                 const thumbnail = video.pictures?.sizes?.[3]?.link || '/img/placeholder.jpg'
 
@@ -144,6 +149,7 @@ export default function FolderVideosGrid({ folderName, allVideos, subfolders }: 
                         src={thumbnail}
                         alt={video.name}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover group-hover:scale-[1.03] transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-[#1A1410]/0 group-hover:bg-[#1A1410]/20 transition-colors duration-500" />
@@ -175,6 +181,18 @@ export default function FolderVideosGrid({ folderName, allVideos, subfolders }: 
                 )
               })}
             </div>
+            {/* Load more button */}
+            {visibleCount < filteredVideos.length && (
+              <div className="flex justify-center pt-10">
+                <button
+                  onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
+                  className="font-body text-sm tracking-wider border border-[#EBE5DC] px-8 py-3 text-[#5C4D3C] hover:border-[#C9A871] hover:text-[#1A1410] transition-all duration-300"
+                >
+                  הראי עוד ({filteredVideos.length - visibleCount} נוספים)
+                </button>
+              </div>
+            )}
+            </>
           ) : (
             <div className="text-center py-16">
               <p className="font-body text-sm text-[#A39888]">אין שיעורים בקטגוריה זו</p>

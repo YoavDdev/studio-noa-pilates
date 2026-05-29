@@ -78,17 +78,6 @@ export default async function VideosPage() {
                         {folder.subtitle || folder.metadata.description}
                       </p>
                     )}
-                    
-                    {/* Subfolder types as tags */}
-                    {folder.subfolderNames && folder.subfolderNames.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {folder.subfolderNames.map((name: string) => (
-                          <span key={name} className="font-body text-[11px] text-[#A39888] border border-[#EBE5DC] px-2.5 py-1">
-                            {name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
 
                     {/* Gold line accent */}
                     <div className="w-0 h-px bg-[#C9A871] group-hover:w-12 transition-all duration-500" />
