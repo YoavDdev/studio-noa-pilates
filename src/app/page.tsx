@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect } from 'react'
+import HomepageFolders from '@/components/HomepageFolders'
 
 export default function Home() {
   const { user, profile } = useAuth()
@@ -121,40 +122,9 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════
-          CLASSES — 3 columns, minimal
+          CLASSES — Dynamic folders from Vimeo
       ═══════════════════════════════════════ */}
-      <section className="section-padding reveal-on-scroll bg-[#F5EFE6]">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="text-center mb-16">
-            <p className="font-body text-xs tracking-[0.25em] uppercase text-[#A39888] mb-4 fade-in-up">מרחב השיעורים</p>
-            <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#1A1410] fade-in-up" style={{ animationDelay: '0.1s' }}>
-              בחרי את הדרך שלך
-            </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-px bg-[#EBE5DC]">
-            {[
-              { emoji: '🌬️', title: 'נשימה', desc: 'חזרה לבסיס. כל שינוי מתחיל בנשימה אחת מודעת.', href: '/videos' },
-              { emoji: '🏠', title: 'עשו את זה בבית', desc: 'שיעורים שמותאמים לכל מרחב — בלי ציוד, בלי תירוצים.', href: '/videos' },
-              { emoji: '✨', title: 'פיטנס ופלייסטיק', desc: 'כוח, גמישות וזרימה — דרך מקל הפלייסטיק הייחודי.', href: '/videos' },
-            ].map((item, i) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className="group block bg-[#FDFCFA] p-8 sm:p-10 md:p-14 hover:bg-[#F5EFE6] transition-colors duration-500 fade-in-up"
-                style={{ animationDelay: `${0.1 + i * 0.1}s` }}
-              >
-                <div className="text-3xl mb-6">{item.emoji}</div>
-                <h3 className="font-heading text-2xl font-light text-[#1A1410] mb-4 group-hover:text-[#C9A871] transition-colors duration-300">
-                  {item.title}
-                </h3>
-                <p className="font-body text-sm leading-7 text-[#5C4D3C]">{item.desc}</p>
-                <div className="mt-8 w-0 h-px bg-[#C9A871] group-hover:w-12 transition-all duration-500" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HomepageFolders />
 
       {/* ═══════════════════════════════════════
           QUOTE — Full width, dark section

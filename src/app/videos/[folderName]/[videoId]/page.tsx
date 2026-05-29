@@ -56,7 +56,7 @@ export default async function VideoPage({ params }: Props) {
         <div className="max-w-5xl mx-auto px-5 sm:px-6 md:px-12 py-4">
           <div className="flex items-center gap-2 font-body text-xs tracking-wide text-[#A39888] overflow-x-auto whitespace-nowrap">
             <Link href="/videos" className="hover:text-[#C9A871] transition-colors">
-              כל הסגנונות
+              לכל סוגי השיעורים
             </Link>
             <span className="text-[#EBE5DC]">/</span>
             <Link 

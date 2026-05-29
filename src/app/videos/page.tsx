@@ -1,4 +1,4 @@
-// דף סגנונות פילאטיס - תצוגת תיקיות Vimeo
+// דף סוגי שיעורים - תצוגת תיקיות Vimeo
 import { getCurrentUserProfile } from '@/lib/auth-helpers'
 import Link from 'next/link'
 
@@ -39,10 +39,10 @@ export default async function VideosPage() {
         <div className="max-w-6xl mx-auto px-5 sm:px-6 md:px-12 flex items-end justify-between">
           <div>
             <h1 className="font-heading text-2xl sm:text-3xl font-light text-[#1A1410]">
-              הסגנונות
+              סוגי השיעורים
             </h1>
             <p className="font-body text-sm text-[#A39888] mt-1">
-              בחרי את הסגנון שמדבר אלייך
+              בחרי את סוג השיעור שמדבר אלייך
             </p>
           </div>
           {!profile && (
@@ -89,10 +89,10 @@ export default async function VideosPage() {
             <div className="text-center py-20 border border-[#EBE5DC]">
               <div className="w-8 h-px bg-[#C9A871] mx-auto mb-8" />
               <h3 className="font-heading text-2xl font-light text-[#1A1410] mb-4">
-                בקרוב — סגנונות חדשים
+                בקרוב — סוגי שיעורים חדשים
               </h3>
               <p className="font-body text-sm text-[#A39888]">
-                נועה עובדת על הוספת סגנונות חדשים ומרגשים
+                נועה עובדת על הוספת סוגי שיעורים חדשים ומרגשים
               </p>
             </div>
           )}

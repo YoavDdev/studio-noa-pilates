@@ -77,7 +77,7 @@ export default function ExplorePage() {
               href="/videos"
               className="font-body text-xs tracking-[0.15em] uppercase text-[#A39888] hover:text-[#C9A871] transition-colors"
             >
-              לסגנונות ←
+              לסוגי השיעורים ←
             </Link>
           </div>
 
