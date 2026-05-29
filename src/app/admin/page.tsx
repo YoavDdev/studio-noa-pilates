@@ -97,8 +97,8 @@ export default async function AdminDashboard() {
             </div>
           </Link>
 
-          {/* ניהול תוכן */}
-          <Link href="/admin/content">
+          {/* ניהול תיקיות */}
+          <Link href="/admin/folders">
             <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer border-2 border-transparent hover:border-green-300">
               <div className="flex items-center justify-between mb-4">
                 <div className="bg-green-100 rounded-full p-3">
@@ -108,9 +108,9 @@ export default async function AdminDashboard() {
                 </div>
                 <span className="text-2xl">📁</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">ניהול תוכן</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">ניהול תיקיות</h3>
               <p className="text-gray-600 text-sm">
-                ניהול תיקיות, קטגוריות וסרטונים
+                עריכת כותרות משניות לתיקיות Vimeo
               </p>
             </div>
           </Link>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFolderMetadata } from '@/config/folder-metadata'
+import { createClient } from '@/lib/supabase/server'
 
 const VIMEO_API_URL = 'https://api.vimeo.com'
 const VIMEO_ACCESS_TOKEN = process.env.VIMEO_ACCESS_TOKEN
@@ -104,24 +105,84 @@ export async function GET(
       }
     })
 
+    // Fetch subtitles from DB for subfolders
+    let dbSettings: Record<string, string> = {}
+    try {
+      const supabase = await createClient()
+      const { data } = await supabase
+        .from('folder_settings')
+        .select('folder_name, subtitle')
+      if (data) {
+        for (const row of data) {
+          dbSettings[row.folder_name] = row.subtitle || ''
+        }
+      }
+    } catch (e) {
+      // table might not exist yet
+    }
+
+    // Enrich subfolders with subtitles
+    const enrichedSubfolders = subfolders.map((sub: { name: string; metadata: { description: string }; [key: string]: unknown }) => ({
+      ...sub,
+      subtitle: dbSettings[sub.name] || sub.metadata.description || ''
+    }))
+
+    // Build allVideos: direct videos + videos from each subfolder (tagged with category)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const formatVideo = (video: any, category: string | null) => ({
+      uri: video.uri,
+      name: video.name,
+      description: video.description,
+      duration: video.duration,
+      pictures: video.pictures,
+      created_time: video.created_time,
+      category // null = direct video, string = subfolder name
+    })
+
+    // Direct videos (no category)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allVideos = videos.map((v: any) => formatVideo(v, null))
+
+    // Fetch videos from each subfolder in parallel
+    if (subfolders.length > 0) {
+      const subfolderVideoPromises = subfolders.map(async (sub: { uri: string; name: string }) => {
+        try {
+          const subVideosRes = await fetch(`${VIMEO_API_URL}${sub.uri}/videos?per_page=100`, {
+            headers: {
+              'Authorization': `bearer ${VIMEO_ACCESS_TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+            next: { revalidate: 0 }
+          })
+          if (!subVideosRes.ok) return []
+          const subVideosData = await subVideosRes.json()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return (subVideosData.data || []).map((v: any) => formatVideo(v, sub.name))
+        } catch {
+          return []
+        }
+      })
+
+      const subfolderVideosArrays = await Promise.all(subfolderVideoPromises)
+      for (const vids of subfolderVideosArrays) {
+        allVideos.push(...vids)
+      }
+    }
+
     return NextResponse.json({
       success: true,
       folder: {
         uri: targetFolder.uri,
         name: targetFolder.name,
         metadata,
+        subtitle: dbSettings[decodedFolderName] || metadata.description || '',
         videoCount: videos.length
       },
-      subfolders,
+      subfolders: enrichedSubfolders,
+      allVideos,
+      // Keep backwards compat
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      videos: videos.map((video: any) => ({
-        uri: video.uri,
-        name: video.name,
-        description: video.description,
-        duration: video.duration,
-        pictures: video.pictures,
-        created_time: video.created_time
-      }))
+      videos: videos.map((video: any) => formatVideo(video, null))
     })
 
   } catch (error) {

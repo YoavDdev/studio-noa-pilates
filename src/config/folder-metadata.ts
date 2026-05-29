@@ -209,15 +209,16 @@ export const getFolderMetadata = (folderName: string): FolderMetadata => {
     return folderMetadata[folderName]
   }
   
-  // Fallback for new folders
+  // Fallback for new folders — visible by default
+  // New folders Noa creates in Vimeo will show automatically
   return {
-    description: 'תכנים חדשים',
+    description: '',
     level: 'all',
     levelHebrew: 'כל הרמות',
     category: 'new',
-    order: 999,
+    order: 50,
     isVisible: true,
-    colorTheme: '#FFE6D6'
+    colorTheme: '#F5EFE6'
   }
 }
 
