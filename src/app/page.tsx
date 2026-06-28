@@ -215,7 +215,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in-up" style={{ animationDelay: '0.2s' }}>
             <a
-              href="mailto:noa@studio-noa.com"
+              href="mailto:studionoapilates.israel@gmail.com"
               className="inline-flex items-center justify-center gap-3 border border-[#1A1410] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#1A1410] hover:text-white transition-colors duration-300"
             >
               אימייל
