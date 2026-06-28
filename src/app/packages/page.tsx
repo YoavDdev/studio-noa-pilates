@@ -136,10 +136,22 @@ export default function PackagesPage() {
             <p className="font-body text-base sm:text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto px-2">
               בחרי את החבילה המתאימה לך והתחילי את המסע שלך עם נועה
             </p>
+            {profile?.user_type === 'trial' && profile?.trial_start_date && (() => {
+              const trialStart = new Date(profile.trial_start_date!)
+              const daysPassed = Math.floor((Date.now() - trialStart.getTime()) / (1000 * 60 * 60 * 24))
+              const daysLeft = Math.max(0, 3 - daysPassed)
+              return (
+                <div className="mt-6 sm:mt-8 max-w-2xl mx-auto bg-[#EFE3CC] border border-[var(--color-primary)] p-4 sm:p-6">
+                  <p className="font-body text-sm text-[var(--color-text-primary)]">
+                    ⏳ <strong>תקופת הניסיון שלך:</strong> {daysLeft > 0 ? `נותרו לך ${daysLeft} ימים חינם` : 'תקופת הניסיון הסתיימה'} — בחרי מנוי להמשיך לצפות בשיעורים.
+                  </p>
+                </div>
+              )
+            })()}
             {!isPayPalConfigured && (
-              <div className="mt-6 sm:mt-8 max-w-2xl mx-auto bg-[#EFE3CC] border border-[var(--color-primary)] p-4 sm:p-6">
-                <p className="font-body text-sm text-[var(--color-text-primary)]">
-                  💳 <strong>שימי לב:</strong> מערכת התשלומים האוטומטית עדיין בהקמה. לרכישת מנוי, צרי קשר ישירות.
+              <div className="mt-4 max-w-2xl mx-auto bg-white border border-[var(--color-border)] p-4 sm:p-6">
+                <p className="font-body text-sm text-[var(--color-text-secondary)]">
+                  💳 <strong>שימי לב:</strong> מערכת התשלומים האוטומטית עדיין בהקמה. לרכישת מנוי, צרי קשר ישירות עם נועה.
                 </p>
               </div>
             )}

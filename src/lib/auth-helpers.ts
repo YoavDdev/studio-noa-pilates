@@ -100,13 +100,13 @@ export async function hasAccessToPremiumContent(): Promise<boolean> {
     return true;
   }
   
-  // תקופת ניסיון - בדיקה שלא עברו 30 יום
+  // תקופת ניסיון - בדיקה שלא עברו 3 ימים
   if (userType === 'trial' && profile.trial_start_date) {
     const trialStart = new Date(profile.trial_start_date);
     const now = new Date();
     const daysPassed = Math.floor((now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
     
-    return daysPassed < 30;
+    return daysPassed < 3;
   }
   
   return false;
@@ -142,7 +142,7 @@ export function isTrialExpired(trialStartDate: string | null): boolean {
   const now = new Date();
   const daysPassed = Math.floor((now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
   
-  return daysPassed >= 30;
+  return daysPassed >= 3;
 }
 
 /**
@@ -155,7 +155,7 @@ export function getTrialDaysRemaining(trialStartDate: string | null): number {
   const now = new Date();
   const daysPassed = Math.floor((now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24));
   
-  return Math.max(0, 30 - daysPassed);
+  return Math.max(0, 3 - daysPassed);
 }
 
 /**
