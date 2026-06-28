@@ -140,7 +140,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
     
     // Profile will be created automatically by the database trigger
-    // No need to manually insert into profiles table
+    // Send welcome email (fire and forget)
+    try {
+      await fetch('/api/send-welcome', { method: 'POST' })
+    } catch {
+      // Non-critical - don't block signup
+    }
   }
 
   const resetPassword = async (email: string) => {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { sendSubscriptionConfirmEmail, sendSubscriptionCancelEmail } from '@/lib/email'
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
         const subscriberEmail = (resource.subscriber as Record<string, unknown>)?.email_address as string
         
         if (subscriberEmail) {
-          await supabaseAdmin
+          const { data: profile } = await supabaseAdmin
             .from('profiles')
             .update({
               user_type: 'subscription',
@@ -105,7 +106,14 @@ export async function POST(req: NextRequest) {
               paypal_last_sync_at: new Date().toISOString()
             })
             .eq('email', subscriberEmail)
+            .select('full_name')
+            .single()
           console.log(`[PayPal Webhook] Activated subscription for: ${subscriberEmail}`)
+          try {
+            await sendSubscriptionConfirmEmail(subscriberEmail, profile?.full_name || 'חברה יקרה', 'monthly')
+          } catch (emailErr) {
+            console.error('[PayPal Webhook] Failed to send confirm email:', emailErr)
+          }
         }
         break
       }
@@ -115,7 +123,7 @@ export async function POST(req: NextRequest) {
       case 'BILLING.SUBSCRIPTION.EXPIRED': {
         const subscriptionId = resource.id as string
 
-        await supabaseAdmin
+        const { data: cancelledProfile } = await supabaseAdmin
           .from('profiles')
           .update({
             user_type: 'free',
@@ -124,7 +132,16 @@ export async function POST(req: NextRequest) {
             paypal_last_sync_at: new Date().toISOString()
           })
           .eq('paypal_subscription_id', subscriptionId)
+          .select('email, full_name')
+          .single()
         console.log(`[PayPal Webhook] Cancelled/Expired subscription: ${subscriptionId}`)
+        if (cancelledProfile?.email) {
+          try {
+            await sendSubscriptionCancelEmail(cancelledProfile.email, cancelledProfile.full_name || 'חברה יקרה')
+          } catch (emailErr) {
+            console.error('[PayPal Webhook] Failed to send cancel email:', emailErr)
+          }
+        }
         break
       }
 
