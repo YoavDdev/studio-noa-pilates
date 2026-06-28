@@ -149,21 +149,21 @@ export default function Home() {
           <div className="text-center mb-16">
             <p className="font-body text-xs tracking-[0.25em] uppercase text-[#A39888] mb-4 fade-in-up">הצטרפי</p>
             <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#1A1410] mb-4 fade-in-up" style={{ animationDelay: '0.1s' }}>
-              7 ימים חינם
+              בחרי את המנוי שלך
             </h2>
             <p className="font-body text-[#5C4D3C] fade-in-up" style={{ animationDelay: '0.15s' }}>
-              מעל 300 שיעורים — בקצב שלך, באהבה לגוף שלך.
+              גישה בלתי מוגבלת לכל השיעורים — ביטול בכל עת.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Package */}
+            {/* Monthly */}
             <div className="border border-[#EBE5DC] p-6 sm:p-10 fade-in-up" style={{ animationDelay: '0.2s' }}>
-              <p className="font-body text-xs tracking-widest uppercase text-[#A39888] mb-6">חבילה</p>
-              <div className="font-heading text-5xl sm:text-6xl font-light text-[#1A1410] mb-1">₪200</div>
-              <p className="font-body text-sm text-[#A39888] mb-8">5 שיעורים · גישה ל-3 חודשים</p>
+              <p className="font-body text-xs tracking-widest uppercase text-[#A39888] mb-6">מנוי חודשי</p>
+              <div className="font-heading text-5xl sm:text-6xl font-light text-[#1A1410] mb-1">₪99</div>
+              <p className="font-body text-sm text-[#A39888] mb-8">לחודש · ביטול בכל עת</p>
               <ul className="space-y-3 mb-10">
-                {['5 שיעורים מלאים', 'גישה ל-3 חודשים', 'תמיכה מלאה'].map(f => (
+                {['גישה לכל השיעורים', 'סרטונים חדשים כל שבוע', 'ביטול בכל עת'].map(f => (
                   <li key={f} className="font-body text-sm text-[#5C4D3C] flex items-center gap-3">
                     <span className="w-1 h-1 rounded-full bg-[#C9A871] flex-shrink-0" />
                     {f}
@@ -172,26 +172,29 @@ export default function Home() {
               </ul>
               <Link href="/packages"
                 className="block text-center border border-[#1A1410] font-body text-sm tracking-wider py-4 hover:bg-[#1A1410] hover:text-white transition-colors duration-300">
-                בחרי חבילה
+                הצטרפי עכשיו
               </Link>
             </div>
 
-            {/* Monthly */}
+            {/* Yearly */}
             <div className="bg-[#1A1410] p-6 sm:p-10 fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <p className="font-body text-xs tracking-widest uppercase text-[#A39888] mb-6">מנוי חודשי</p>
-              <div className="font-heading text-5xl sm:text-6xl font-light text-[#F5EFE6] mb-1">₪99</div>
-              <p className="font-body text-sm text-[#A39888] mb-8">לחודש · ביטול בכל עת</p>
+              <div className="flex items-center justify-between mb-6">
+                <p className="font-body text-xs tracking-widest uppercase text-[#A39888]">מנוי שנתי</p>
+                <span className="font-body text-xs bg-[#C9A871] text-[#1A1410] px-2 py-0.5">חסכון 17%</span>
+              </div>
+              <div className="font-heading text-5xl sm:text-6xl font-light text-[#F5EFE6] mb-1">₪990</div>
+              <p className="font-body text-sm text-[#A39888] mb-8">לשנה · במקום ₪1,188</p>
               <ul className="space-y-3 mb-10">
-                {['גישה לכל השיעורים', 'תוכניות לכל רמה', 'קהילה תומכת'].map(f => (
+                {['כל יתרונות המנוי החודשי', 'חסכון של ₪198 בשנה', 'עדיפות בהרשמה לאירועים'].map(f => (
                   <li key={f} className="font-body text-sm text-[#B8CEBC] flex items-center gap-3">
                     <span className="w-1 h-1 rounded-full bg-[#C9A871] flex-shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-              <Link href="/register"
+              <Link href="/packages"
                 className="block text-center bg-[#C9A871] text-[#1A1410] font-body text-sm tracking-wider py-4 hover:bg-[#F5EFE6] transition-colors duration-300">
-                נסי 7 ימים חינם
+                הצטרפי ושמרי
               </Link>
             </div>
           </div>

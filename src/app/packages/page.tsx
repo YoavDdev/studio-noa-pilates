@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
-import { CheckIcon, SparklesIcon, TrophyIcon } from '@heroicons/react/24/outline'
+import { CheckIcon, SparklesIcon, TrophyIcon } from '@heroicons/react/24/outline' // SparklesIcon used for monthly plan icon
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 import toast from 'react-hot-toast'
 
@@ -17,41 +17,22 @@ export default function PackagesPage() {
 
   const packages = [
     {
-      id: 'free',
-      name: 'גישה חופשית',
-      price: '0',
-      currency: '₪',
-      period: '',
-      description: 'התנסות ראשונית בסטודיו',
-      features: [
-        'גישה לשיעורים נבחרים',
-        'תצוגה מקדימה של תוכן',
-        'מעקב בסיסי',
-      ],
-      popular: false,
-      icon: SparklesIcon,
-      badge: null,
-      paypalPrice: null,
-      isFree: true
-    },
-    {
       id: 'premium-monthly',
       name: 'מנוי חודשי',
       price: '99',
       currency: '₪',
       period: 'לחודש',
-      description: 'גמישות מלאה',
+      description: 'גמישות מלאה · ביטול בכל עת',
       features: [
         'גישה בלתי מוגבלת לכל הסרטונים',
         'סרטונים חדשים כל שבוע',
-        'שיעורים בהתאמה אישית',
-        'קהילה פרטית',
-        'תמיכה מועדפת',
+        'ביטול בכל עת',
       ],
-      popular: true,
-      icon: TrophyIcon,
-      badge: 'הכי פופולרי',
-      paypalPrice: '25'
+      popular: false,
+      icon: SparklesIcon,
+      badge: null,
+      paypalPrice: null,
+      isFree: false
     },
     {
       id: 'premium-yearly',
@@ -60,18 +41,17 @@ export default function PackagesPage() {
       originalPrice: '1,188',
       currency: '₪',
       period: 'לשנה',
-      description: 'חסכון של 17%',
+      description: 'חסכון של 17% · המבצע הטוב ביותר',
       features: [
-        'כל היתרונות של המנוי החודשי',
-        'חסכון של 198 ₪ בשנה',
+        'כל יתרונות המנוי החודשי',
+        'חסכון של ₪198 בשנה',
         'עדיפות בהרשמה לאירועים',
-        'תוכן בלעדי לחברי שנתי',
-        'אפשרות להקפאת מנוי',
       ],
-      popular: false,
+      popular: true,
       icon: TrophyIcon,
-      badge: 'המבצע הטוב ביותר',
-      paypalPrice: '250'
+      badge: 'חסכון 17%',
+      paypalPrice: null,
+      isFree: false
     }
   ]
 
@@ -99,25 +79,6 @@ export default function PackagesPage() {
     } catch (error) {
       toast.error('שגיאה בעדכון המנוי')
       console.error('Error updating subscription:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleFreeAccess = async () => {
-    if (!profile) return
-    setLoading(true)
-    try {
-      const updates = {
-        subscription_id: 'Free',
-        user_type: 'free'
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await updateProfile(updates as any)
-      toast.success('עברת לגישה חופשית')
-    } catch (error) {
-      toast.error('שגיאה בעדכון')
-      console.error('Error:', error)
     } finally {
       setLoading(false)
     }
@@ -192,7 +153,7 @@ export default function PackagesPage() {
               </h3>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  {profile.subscription_id?.startsWith('I-') || profile.user_type === 'premium' ? (
+                  {profile.user_type === 'subscription' || profile.user_type === 'premium' || profile.subscription_id?.startsWith('I-') ? (
                     <div>
                       <p className="font-medium text-[var(--color-sage)]">מנוי פרימיום פעיל</p>
                       {profile.subscription_start_date && (
@@ -210,7 +171,7 @@ export default function PackagesPage() {
           )}
 
           {/* Packages Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-12 sm:mb-20 max-w-6xl mx-auto border border-[var(--color-border)]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 mb-12 sm:mb-20 max-w-4xl mx-auto border border-[var(--color-border)]">
             {packages.map((pkg, index) => {
               const Icon = pkg.icon
               return (
@@ -275,19 +236,7 @@ export default function PackagesPage() {
                     ))}
                   </ul>
 
-                  {pkg.isFree ? (
-                    <button
-                      onClick={handleFreeAccess}
-                      disabled={loading || profile?.subscription_id === 'Free' || profile?.user_type === 'free'}
-                      className={`font-body w-full py-4 border transition-colors ${
-                        pkg.popular 
-                          ? 'border-white text-white hover:bg-white hover:text-[var(--color-black)]' 
-                          : 'border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary-light)]'
-                      } disabled:opacity-50 disabled:cursor-not-allowed`}
-                    >
-                      {profile?.subscription_id === 'Free' || profile?.user_type === 'free' ? 'המנוי הנוכחי שלך' : 'התחילי חינם'}
-                    </button>
-                  ) : selectedPackage === pkg.id ? (
+                  {selectedPackage === pkg.id ? (
                     <div className="space-y-4">
                       {isPayPalConfigured ? (
                         <PayPalButtons
