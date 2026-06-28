@@ -75,25 +75,23 @@ export default function PackagesPage() {
     }
   ]
 
-  const handlePayPalSuccess = async (packageId: string) => {
+  const handlePayPalSuccess = async (packageId: string, subscriptionID?: string) => {
     setLoading(true)
     try {
-      const updates: Record<string, unknown> = {}
-      
-      if (packageId === 'premium-monthly') {
-        updates.subscription_id = 'Premium-Monthly'
-        updates.user_type = 'premium'
-        const expirationDate = new Date()
-        expirationDate.setMonth(expirationDate.getMonth() + 1)
-        updates.subscription_start_date = new Date().toISOString()
-      } else if (packageId === 'premium-yearly') {
-        updates.subscription_id = 'Premium-Yearly'
-        updates.user_type = 'premium'
-        const expirationDate = new Date()
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1)
-        updates.subscription_start_date = new Date().toISOString()
+      const updates: Record<string, unknown> = {
+        user_type: 'subscription',
+        subscription_start_date: new Date().toISOString(),
+        paypal_status: 'ACTIVE',
+        paypal_last_sync_at: new Date().toISOString()
       }
-      
+
+      if (subscriptionID) {
+        updates.subscription_id = subscriptionID
+        updates.paypal_subscription_id = subscriptionID
+      } else {
+        updates.subscription_id = packageId === 'premium-monthly' ? 'Premium-Monthly' : 'Premium-Yearly'
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await updateProfile(updates as any)
       toast.success('הרכישה הושלמה בהצלחה! 🎉')
@@ -294,23 +292,17 @@ export default function PackagesPage() {
                       {isPayPalConfigured ? (
                         <PayPalButtons
                           style={{ layout: 'vertical' }}
-                          createOrder={(data, actions) => {
-                            return actions.order.create({
-                              intent: 'CAPTURE',
-                              purchase_units: [{
-                                amount: {
-                                  value: pkg.paypalPrice || '0',
-                                  currency_code: 'USD'
-                                },
-                                description: pkg.name
-                              }]
+                          createSubscription={(data, actions) => {
+                            const planId = pkg.id === 'premium-monthly'
+                              ? process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_MONTHLY
+                              : process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID_YEARLY
+                            return actions.subscription.create({
+                              plan_id: planId || ''
                             })
                           }}
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          onApprove={(data: unknown, actions: any) => {
-                            return actions.order.capture().then(() => {
-                              handlePayPalSuccess(pkg.id)
-                            })
+                          onApprove={(data: any) => {
+                            return handlePayPalSuccess(pkg.id, data.subscriptionID)
                           }}
                           onError={handlePayPalError}
                           disabled={loading}
@@ -417,7 +409,9 @@ export default function PackagesPage() {
   return isPayPalConfigured ? (
     <PayPalScriptProvider options={{ 
       clientId: paypalClientId!,
-      currency: 'USD'
+      currency: 'ILS',
+      vault: true,
+      intent: 'subscription'
     }}>
       {PageContent}
     </PayPalScriptProvider>
