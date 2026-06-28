@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import HomepageFolders from '@/components/HomepageFolders'
 
 export default function Home() {
@@ -202,36 +202,93 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════
-          CONTACT — Minimal, warm
+          CONTACT — Form
       ═══════════════════════════════════════ */}
-      <section className="section-padding reveal-on-scroll border-t border-[#EBE5DC]">
-        <div className="max-w-2xl mx-auto px-5 sm:px-6 md:px-12 text-center">
-          <p className="font-body text-xs tracking-[0.25em] uppercase text-[#A39888] mb-6 fade-in-up">צרי קשר</p>
-          <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#1A1410] mb-4 fade-in-up" style={{ animationDelay: '0.1s' }}>
-            בואי נדבר
-          </h2>
-          <p className="font-body text-[#5C4D3C] mb-12 fade-in-up" style={{ animationDelay: '0.15s' }}>
-            שאלות? רוצה להתחיל? אני כאן.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center fade-in-up" style={{ animationDelay: '0.2s' }}>
-            <a
-              href="mailto:studionoapilates.israel@gmail.com"
-              className="inline-flex items-center justify-center gap-3 border border-[#1A1410] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#1A1410] hover:text-white transition-colors duration-300"
-            >
-              אימייל
-            </a>
-            <a
-              href="https://wa.me/972500000000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 bg-[#1A1410] text-[#FDFCFA] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#C9A871] transition-colors duration-300"
-            >
-              וואטסאפ
-            </a>
-          </div>
-        </div>
-      </section>
+      <ContactSection />
 
     </main>
+  )
+}
+
+function ContactSection() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      })
+      if (!res.ok) throw new Error()
+      setSent(true)
+      setName('')
+      setEmail('')
+      setMessage('')
+    } catch {
+      setError('שגיאה בשליחה, נסי שוב')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <section className="section-padding reveal-on-scroll border-t border-[#EBE5DC]">
+      <div className="max-w-xl mx-auto px-5 sm:px-6 md:px-12 text-center">
+        <p className="font-body text-xs tracking-[0.25em] uppercase text-[#A39888] mb-6 fade-in-up">צרי קשר</p>
+        <h2 className="font-heading text-[clamp(2.25rem,4.5vw,3.5rem)] font-light text-[#1A1410] mb-4 fade-in-up">
+          בואי נדבר
+        </h2>
+        <p className="font-body text-[#5C4D3C] mb-10 fade-in-up">
+          שאלות? רוצה להתחיל? אני כאן.
+        </p>
+        {sent ? (
+          <p className="font-body text-[#5A7A5C] text-base py-8">ההודעה נשלחה ✓ אחזור אלייך בקרוב.</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-right fade-in-up">
+            <input
+              type="text"
+              placeholder="שם מלא"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              className="w-full border border-[#E8E2D9] bg-white px-4 py-3 font-body text-sm text-[#1A1410] placeholder-[#A39888] focus:outline-none focus:border-[#1A1410] transition-colors"
+            />
+            <input
+              type="email"
+              placeholder="כתובת מייל"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              className="w-full border border-[#E8E2D9] bg-white px-4 py-3 font-body text-sm text-[#1A1410] placeholder-[#A39888] focus:outline-none focus:border-[#1A1410] transition-colors"
+            />
+            <textarea
+              placeholder="ההודעה שלך..."
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              required
+              rows={4}
+              className="w-full border border-[#E8E2D9] bg-white px-4 py-3 font-body text-sm text-[#1A1410] placeholder-[#A39888] focus:outline-none focus:border-[#1A1410] transition-colors resize-none"
+            />
+            {error && <p className="font-body text-sm text-[#B86B5A]">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#1A1410] text-[#FDFCFA] font-body text-sm tracking-wider px-10 py-4 hover:bg-[#C9A871] hover:text-[#1A1410] transition-colors duration-300 disabled:opacity-50"
+            >
+              {loading ? 'שולח...' : 'שלחי הודעה'}
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
   )
 }
