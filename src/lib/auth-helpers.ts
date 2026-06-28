@@ -30,8 +30,12 @@ export function getUserType(subscriptionId: string | null, userType?: string): U
     return 'admin';
   }
   
-  // מנוי פעיל - PayPal subscription ID מתחיל ב-I-
-  if (subscriptionId && subscriptionId.startsWith('I-')) {
+  // מנוי פעיל - user_type='subscription' או PayPal subscription ID מתחיל ב-I- או P-
+  if (
+    userType === 'subscription' ||
+    userType === 'premium' ||
+    (subscriptionId && (subscriptionId.startsWith('I-') || subscriptionId.startsWith('P-')))
+  ) {
     return 'premium';
   }
   
@@ -80,11 +84,14 @@ export async function hasAccessToPremiumContent(): Promise<boolean> {
   
   const { data: profile } = await supabase
     .from('profiles')
-    .select('subscription_id, user_type, trial_start_date, paypal_status')
+    .select('subscription_id, user_type, trial_start_date, paypal_status, is_admin')
     .eq('id', user.id)
     .single();
   
   if (!profile) return false;
+
+  // is_admin flag - גישה מלאה
+  if (profile.is_admin) return true;
   
   const userType = getUserType(profile.subscription_id, profile.user_type);
   
