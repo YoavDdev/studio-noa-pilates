@@ -157,30 +157,6 @@ export default function PackagesPage() {
             )}
           </div>
 
-          {/* Current Subscription Status */}
-          {profile && (
-            <div className="bg-white border border-[var(--color-border)] p-5 sm:p-8 mb-8 sm:mb-12 max-w-3xl mx-auto">
-              <h3 className="font-heading text-base sm:text-lg font-medium mb-3 sm:mb-4 text-[var(--color-text-primary)]">
-                המנוי הנוכחי שלך
-              </h3>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <div>
-                  {profile.user_type === 'subscription' || profile.user_type === 'premium' || profile.subscription_id?.startsWith('I-') ? (
-                    <div>
-                      <p className="font-medium text-[var(--color-sage)]">מנוי פרימיום פעיל</p>
-                      {profile.subscription_start_date && (
-                        <p className="text-sm text-[var(--color-text-muted)]">
-                          החל מ: {new Date(profile.subscription_start_date).toLocaleDateString('he-IL')}
-                        </p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-[var(--color-text-secondary)]">גישה חופשית</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Packages Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-0 mb-12 sm:mb-20 max-w-4xl mx-auto border border-[var(--color-border)]">
