@@ -140,12 +140,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error
     
     // Profile will be created automatically by the database trigger
-    // Send welcome email (fire and forget)
-    try {
-      await fetch('/api/send-welcome', { method: 'POST' })
-    } catch {
-      // Non-critical - don't block signup
-    }
+    // Send welcome email after delay to ensure trigger has completed (fire and forget)
+    setTimeout(() => {
+      fetch('/api/send-welcome', { method: 'POST' }).catch(() => {})
+    }, 3000)
   }
 
   const resetPassword = async (email: string) => {
