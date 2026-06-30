@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-const FROM = 'noreply@noaguralnik.co.il'
+const FROM = 'onboarding@resend.dev'
 const FROM_NAME = 'Studio Noa Pilates'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://noaguralnik.co.il'
 const NOA_EMAIL = process.env.NOA_EMAIL || 'studionoapilates.israel@gmail.com'
