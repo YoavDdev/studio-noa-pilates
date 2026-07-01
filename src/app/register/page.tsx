@@ -33,7 +33,12 @@ export default function RegisterPage() {
       setPassword('')
       setFullName('')
     } catch (error: unknown) {
-      toast.error((error as Error).message || translations.registerError)
+      const msg = (error as Error).message || ''
+      if (msg.includes('already registered') || msg.includes('User already registered') || msg.includes('already been registered')) {
+        toast.error('כתובת המייל הזו כבר רשומה במערכת.\nאם נרשמת עם Google — התחברי דרך כפתור Google.', { duration: 8000 })
+      } else {
+        toast.error(msg || translations.registerError)
+      }
     } finally {
       setLoading(false)
     }

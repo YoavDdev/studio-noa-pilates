@@ -26,7 +26,12 @@ export default function LoginPage() {
       toast.success(translations.loginSuccess)
       router.push('/')
     } catch (error: unknown) {
-      toast.error((error as Error).message || translations.loginError)
+      const msg = (error as Error).message || ''
+      if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials')) {
+        toast.error('פרטי ההתחברות שגויים.\nאם נרשמת עם Google — לחצי על כפתור Google למטה.', { duration: 8000 })
+      } else {
+        toast.error(msg || translations.loginError)
+      }
     } finally {
       setLoading(false)
     }
