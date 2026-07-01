@@ -34,23 +34,23 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { folder_name, subtitle, sort_order } = body
+    const { folder_name, subtitle, sort_order, image_url } = body
 
     if (!folder_name) {
       return NextResponse.json({ error: 'folder_name is required' }, { status: 400 })
     }
 
     const supabase = await createClient()
+    const upsertData: Record<string, unknown> = {
+      folder_name,
+      subtitle: subtitle || '',
+      sort_order: sort_order ?? 50,
+    }
+    if (image_url !== undefined) upsertData.image_url = image_url
+
     const { data, error } = await supabase
       .from('folder_settings')
-      .upsert(
-        { 
-          folder_name, 
-          subtitle: subtitle || '', 
-          sort_order: sort_order ?? 50 
-        },
-        { onConflict: 'folder_name' }
-      )
+      .upsert(upsertData, { onConflict: 'folder_name' })
       .select()
       .single()
 

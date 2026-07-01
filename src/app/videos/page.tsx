@@ -1,6 +1,7 @@
 // דף סוגי שיעורים - תצוגת תיקיות Vimeo
 import { getCurrentUserProfile } from '@/lib/auth-helpers'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default async function VideosPage() {
   const profile = await getCurrentUserProfile()
@@ -65,22 +66,42 @@ export default async function VideosPage() {
                 <Link
                   key={folder.uri}
                   href={`/videos/${encodeURIComponent(folder.name)}`}
-                  className="group block border border-[#EBE5DC] -mt-px -mr-px hover:bg-[#F5EFE6] transition-colors duration-500 fade-in-up"
+                  className="group block border border-[#EBE5DC] -mt-px -mr-px overflow-hidden fade-in-up"
                   style={{ animationDelay: `${index * 0.08}s` }}
                 >
-                  <div className="p-8 sm:p-10 md:p-12">
-                    <h3 className="font-heading text-2xl md:text-3xl font-light text-[#1A1410] mb-3 group-hover:text-[#C9A871] transition-colors duration-300">
+                  {/* Image area */}
+                  <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#EBE5DC]">
+                    {folder.image_url ? (
+                      <Image
+                        src={folder.image_url}
+                        alt={folder.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="font-heading text-5xl font-light text-[#C4BAA8]">
+                          {folder.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-[#1A1410]/0 group-hover:bg-[#1A1410]/20 transition-colors duration-500" />
+                  </div>
+
+                  {/* Text area */}
+                  <div className="p-6 sm:p-8 group-hover:bg-[#F5EFE6] transition-colors duration-300">
+                    <h3 className="font-heading text-xl md:text-2xl font-light text-[#1A1410] mb-2 group-hover:text-[#C9A871] transition-colors duration-300">
                       {folder.name}
                     </h3>
 
-                    {(folder.subtitle || folder.metadata.description) && (
-                      <p className="font-body text-sm leading-7 text-[#5C4D3C] mb-6 line-clamp-2">
-                        {folder.subtitle || folder.metadata.description}
+                    {(folder.subtitle || folder.metadata?.description) && (
+                      <p className="font-body text-sm leading-6 text-[#5C4D3C] mb-4 line-clamp-2">
+                        {folder.subtitle || folder.metadata?.description}
                       </p>
                     )}
 
-                    {/* Gold line accent */}
-                    <div className="w-0 h-px bg-[#C9A871] group-hover:w-12 transition-all duration-500" />
+                    <div className="w-0 h-px bg-[#C9A871] group-hover:w-10 transition-all duration-500" />
                   </div>
                 </Link>
               ))}

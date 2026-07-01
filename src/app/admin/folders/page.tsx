@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
 
 interface FolderFromVimeo {
   name: string
@@ -23,6 +25,7 @@ interface FolderSetting {
   folder_name: string
   subtitle: string
   sort_order: number
+  image_url?: string | null
 }
 
 export default function AdminFoldersPage() {
@@ -34,6 +37,9 @@ export default function AdminFoldersPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
+  const [uploadingImage, setUploadingImage] = useState<string | null>(null)
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
+  const supabase = createClient()
 
   // Check admin access
   useEffect(() => {
@@ -94,6 +100,79 @@ export default function AdminFoldersPage() {
 
     fetchData()
   }, [])
+
+  const safeFolderKey = (name: string): string => {
+    let hash = 0
+    for (let i = 0; i < name.length; i++) {
+      hash = ((hash << 5) - hash) + name.charCodeAt(i)
+      hash |= 0
+    }
+    return Math.abs(hash).toString(36)
+  }
+
+  const handleImageDelete = async (folderName: string) => {
+    if (!confirm(`למחוק את התמונה של "${folderName}"?`)) return
+    try {
+      const response = await fetch('/api/admin/folder-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folder_name: folderName,
+          subtitle: editingSubtitles[folderName] || settings[folderName]?.subtitle || '',
+          sort_order: settings[folderName]?.sort_order ?? 50,
+          image_url: null
+        })
+      })
+      if (!response.ok) throw new Error('Failed to save')
+      const data = await response.json()
+      setSettings(prev => ({ ...prev, [folderName]: data.setting }))
+      toast.success('תמונה נמחקה')
+    } catch {
+      toast.error('שגיאה במחיקת תמונה')
+    }
+  }
+
+  const handleImageUpload = async (folderName: string, file: File) => {
+    if (!file) return
+    setUploadingImage(folderName)
+    try {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+      const path = `folders/${safeFolderKey(folderName)}.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('folder-images')
+        .upload(path, file, { upsert: true, contentType: file.type })
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage
+        .from('folder-images')
+        .getPublicUrl(path)
+
+      const imageUrl = urlData.publicUrl
+
+      const response = await fetch('/api/admin/folder-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          folder_name: folderName,
+          subtitle: editingSubtitles[folderName] || settings[folderName]?.subtitle || '',
+          sort_order: settings[folderName]?.sort_order ?? 50,
+          image_url: imageUrl
+        })
+      })
+
+      if (!response.ok) throw new Error('Failed to save')
+      const data = await response.json()
+      setSettings(prev => ({ ...prev, [folderName]: data.setting }))
+      toast.success(`תמונה עודכנה עבור "${folderName}"`)
+    } catch (err) {
+      console.error(err)
+      toast.error('שגיאה בהעלאת תמונה')
+    } finally {
+      setUploadingImage(null)
+    }
+  }
 
   const handleSave = async (folderName: string) => {
     setSaving(folderName)
@@ -171,34 +250,90 @@ export default function AdminFoldersPage() {
                     </span>
                   </div>
 
-                  {/* Subtitle input */}
-                  <div className="flex gap-3 items-end">
-                    <div className="flex-1">
-                      <label className="font-body text-xs text-[#A39888] mb-1 block">
-                        כותרת משנית
-                      </label>
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    {/* Image upload */}
+                    <div className="shrink-0">
+                      <label className="font-body text-xs text-[#A39888] mb-2 block">תמונה</label>
+                      <div
+                        className="w-24 h-24 border border-[#EBE5DC] flex items-center justify-center cursor-pointer hover:border-[#C9A871] transition-colors overflow-hidden relative bg-[#FAF8F3]"
+                        onClick={() => fileInputRefs.current[folder.name]?.click()}
+                      >
+                        {settings[folder.name]?.image_url ? (
+                          <Image
+                            src={settings[folder.name].image_url!}
+                            alt={folder.name}
+                            fill
+                            sizes="96px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="font-body text-[10px] text-[#A39888] text-center px-2">
+                            {uploadingImage === folder.name ? 'מעלה...' : 'לחצי להעלאה'}
+                          </span>
+                        )}
+                        {uploadingImage === folder.name && (
+                          <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                            <span className="font-body text-[10px] text-[#A39888]">מעלה...</span>
+                          </div>
+                        )}
+                      </div>
                       <input
-                        type="text"
-                        value={currentSubtitle}
-                        onChange={(e) => setEditingSubtitles(prev => ({
-                          ...prev,
-                          [folder.name]: e.target.value
-                        }))}
-                        placeholder="למשל: תרגילי נשימה לשחרור ורגיעה"
-                        className="w-full font-body text-sm text-[#1A1410] border border-[#EBE5DC] px-4 py-3 bg-transparent focus:border-[#C9A871] focus:outline-none transition-colors"
+                        ref={el => { fileInputRefs.current[folder.name] = el }}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) handleImageUpload(folder.name, file)
+                        }}
                       />
+                      {settings[folder.name]?.image_url && (
+                        <div className="flex gap-3 mt-1">
+                          <button
+                            onClick={() => fileInputRefs.current[folder.name]?.click()}
+                            className="font-body text-[10px] text-[#A39888] hover:text-[#C9A871] transition-colors"
+                          >
+                            החלף
+                          </button>
+                          <button
+                            onClick={() => handleImageDelete(folder.name)}
+                            className="font-body text-[10px] text-[#A39888] hover:text-red-400 transition-colors"
+                          >
+                            מחק
+                          </button>
+                        </div>
+                      )}
                     </div>
-                    <button
-                      onClick={() => handleSave(folder.name)}
-                      disabled={!hasChanged || isSaving}
-                      className={`font-body text-sm px-6 py-3 transition-colors ${
-                        hasChanged && !isSaving
-                          ? 'bg-[#1A1410] text-[#FDFCFA] hover:bg-[#C9A871]'
-                          : 'bg-[#EBE5DC] text-[#A39888] cursor-not-allowed'
-                      }`}
-                    >
-                      {isSaving ? '...' : 'שמור'}
-                    </button>
+
+                    {/* Subtitle input */}
+                    <div className="flex-1">
+                      <div className="flex gap-3 items-end">
+                        <div className="flex-1">
+                          <label className="font-body text-xs text-[#A39888] mb-1 block">כותרת משנית</label>
+                          <input
+                            type="text"
+                            value={currentSubtitle}
+                            onChange={(e) => setEditingSubtitles(prev => ({
+                              ...prev,
+                              [folder.name]: e.target.value
+                            }))}
+                            placeholder="למשל: תרגילי נשימה לשחרור ורגיעה"
+                            className="w-full font-body text-sm text-[#1A1410] border border-[#EBE5DC] px-4 py-3 bg-transparent focus:border-[#C9A871] focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <button
+                          onClick={() => handleSave(folder.name)}
+                          disabled={!hasChanged || isSaving}
+                          className={`font-body text-sm px-6 py-3 transition-colors ${
+                            hasChanged && !isSaving
+                              ? 'bg-[#1A1410] text-[#FDFCFA] hover:bg-[#C9A871]'
+                              : 'bg-[#EBE5DC] text-[#A39888] cursor-not-allowed'
+                          }`}
+                        >
+                          {isSaving ? '...' : 'שמור'}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

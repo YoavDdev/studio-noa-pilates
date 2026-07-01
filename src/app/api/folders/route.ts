@@ -112,16 +112,16 @@ export async function GET() {
     })
 
     // Fetch folder_settings from DB (subtitles + sort order)
-    let dbSettings: Record<string, { subtitle: string; sort_order: number }> = {}
+    let dbSettings: Record<string, { subtitle: string; sort_order: number; image_url?: string | null }> = {}
     try {
       const supabase = await createClient()
       const { data } = await supabase
         .from('folder_settings')
-        .select('folder_name, subtitle, sort_order')
+        .select('folder_name, subtitle, sort_order, image_url')
       
       if (data) {
         for (const row of data) {
-          dbSettings[row.folder_name] = { subtitle: row.subtitle, sort_order: row.sort_order }
+          dbSettings[row.folder_name] = { subtitle: row.subtitle, sort_order: row.sort_order, image_url: row.image_url }
         }
       }
     } catch (e) {
@@ -134,7 +134,8 @@ export async function GET() {
       return {
         ...folder,
         subtitle: dbSetting?.subtitle || folder.metadata.description || '',
-        sortOrder: dbSetting?.sort_order ?? folder.metadata.order ?? 50
+        sortOrder: dbSetting?.sort_order ?? folder.metadata.order ?? 50,
+        image_url: dbSetting?.image_url || null
       }
     }).sort((a: { sortOrder: number }, b: { sortOrder: number }) => a.sortOrder - b.sortOrder)
     
