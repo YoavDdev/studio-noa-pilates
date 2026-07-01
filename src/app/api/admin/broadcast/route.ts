@@ -105,12 +105,14 @@ export async function POST(req: Request) {
     }
 
     if (sendEmail) {
+      console.log(`[Broadcast] Sending email from: ${FROM_NAME} <${FROM}>`)
+      console.log(`[Broadcast] Recipients:`, recipients.map(r => r.email))
       const emailChunks: typeof recipients[] = []
       for (let i = 0; i < recipients.length; i += 50) {
         emailChunks.push(recipients.slice(i, i + 50))
       }
       for (const chunk of emailChunks) {
-        await Promise.allSettled(
+        const results = await Promise.allSettled(
           chunk.map(r =>
             resend.emails.send({
               from: `${FROM_NAME} <${FROM}>`,
@@ -120,6 +122,13 @@ export async function POST(req: Request) {
             })
           )
         )
+        results.forEach((result, i) => {
+          if (result.status === 'rejected') {
+            console.error(`[Broadcast] Email failed for ${chunk[i].email}:`, result.reason)
+          } else {
+            console.log(`[Broadcast] Email sent to ${chunk[i].email}:`, result.value)
+          }
+        })
       }
     }
 
