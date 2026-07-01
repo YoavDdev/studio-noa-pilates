@@ -24,24 +24,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    const { subject, body, audience } = await req.json()
+    const { subject, body, audience, channel = 'both', userIds } = await req.json()
 
-    if (!subject || !body || !audience) {
+    if (!subject || !body) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
     }
 
-    let query = supabase.from('profiles').select('id, email, full_name')
+    // channel: 'email' | 'site' | 'both'
+    const sendEmail = channel === 'email' || channel === 'both'
+    const sendSite  = channel === 'site'  || channel === 'both'
 
-    if (audience === 'subscription') {
-      query = query.eq('user_type', 'subscription')
-    } else if (audience === 'trial') {
-      query = query.eq('user_type', 'trial')
-    } else if (audience === 'free') {
-      query = query.eq('user_type', 'free')
+    let recipients: { id: string; email: string; full_name: string }[] = []
+
+    if (Array.isArray(userIds) && userIds.length > 0) {
+      // Specific users
+      const { data, error: fetchError } = await supabase
+        .from('profiles')
+        .select('id, email, full_name')
+        .in('id', userIds)
+      if (fetchError) throw fetchError
+      recipients = data || []
+    } else {
+      // Audience group
+      let query = supabase.from('profiles').select('id, email, full_name')
+      if (audience === 'subscription') query = query.eq('user_type', 'subscription')
+      else if (audience === 'trial')    query = query.eq('user_type', 'trial')
+      else if (audience === 'free')     query = query.eq('user_type', 'free')
+      const { data, error: fetchError } = await query
+      if (fetchError) throw fetchError
+      recipients = data || []
     }
-
-    const { data: recipients, error: fetchError } = await query
-    if (fetchError) throw fetchError
 
     if (!recipients || recipients.length === 0) {
       return NextResponse.json({ count: 0 })
@@ -76,38 +88,39 @@ export async function POST(req: Request) {
       </html>
     `
 
-    const siteMessageData = recipients.map(r => ({
-      user_id: r.id,
-      subject,
-      body,
-      is_read: false,
-      created_at: new Date().toISOString()
-    }))
-
-    const { error: msgError } = await supabase
-      .from('user_messages')
-      .insert(siteMessageData)
-
-    if (msgError) {
-      console.error('[Broadcast] Message insert error (table may not exist yet):', msgError.message)
+    if (sendSite) {
+      const siteMessageData = recipients.map(r => ({
+        user_id: r.id,
+        subject,
+        body,
+        is_read: false,
+        created_at: new Date().toISOString()
+      }))
+      const { error: msgError } = await supabase
+        .from('user_messages')
+        .insert(siteMessageData)
+      if (msgError) {
+        console.error('[Broadcast] Message insert error:', msgError.message)
+      }
     }
 
-    const emailChunks: typeof recipients[] = []
-    for (let i = 0; i < recipients.length; i += 50) {
-      emailChunks.push(recipients.slice(i, i + 50))
-    }
-
-    for (const chunk of emailChunks) {
-      await Promise.allSettled(
-        chunk.map(r =>
-          resend.emails.send({
-            from: `${FROM_NAME} <${FROM}>`,
-            to: r.email,
-            subject,
-            html: emailHtml,
-          })
+    if (sendEmail) {
+      const emailChunks: typeof recipients[] = []
+      for (let i = 0; i < recipients.length; i += 50) {
+        emailChunks.push(recipients.slice(i, i + 50))
+      }
+      for (const chunk of emailChunks) {
+        await Promise.allSettled(
+          chunk.map(r =>
+            resend.emails.send({
+              from: `${FROM_NAME} <${FROM}>`,
+              to: r.email,
+              subject,
+              html: emailHtml,
+            })
+          )
         )
-      )
+      }
     }
 
     return NextResponse.json({ success: true, count: recipients.length })

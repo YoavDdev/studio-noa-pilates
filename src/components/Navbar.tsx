@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
+import NotificationBell from '@/components/NotificationBell'
 
 export default function Navbar() {
   const { user, profile, signOut } = useAuth()
@@ -118,7 +119,10 @@ export default function Navbar() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-6">
+          <div className="flex items-center justify-end gap-4">
+
+            {/* Bell */}
+            {user && <NotificationBell />}
 
             {/* Desktop actions */}
             {user ? (
